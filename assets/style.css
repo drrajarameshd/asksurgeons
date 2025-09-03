@@ -1,10 +1,9 @@
 :root {
-  --primary: #007BFF;
-  --primary-dark: #0056b3;
-  --accent: #17a2b8;
+  --primary: #599FD5;
+  --primary-dark: #387AAC;
+  --accent: #7DB6E0;
   --background: #ffffff;
   --text: #333333;
-  --highlight: #FFD700;
 }
 
 body {
@@ -31,7 +30,7 @@ nav a {
 }
 
 nav a:hover {
-  color: var(--highlight);
+  color: var(--accent);
 }
 
 .btn {
