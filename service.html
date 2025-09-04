@@ -25,46 +25,6 @@
     #toast { visibility:hidden; min-width:250px; margin-left:-125px; background-color:#333; color:#fff; text-align:center; border-radius:8px; padding:14px; position:fixed; z-index:9999; left:50%; bottom:30px; font-size:15px; opacity:0; transition:opacity .4s, bottom .4s; }
     #toast.show { visibility:visible; opacity:1; bottom:50px; }
     #toast.success { background-color:#16a34a; } #toast.error { background-color:#dc2626; }
-
-    /* Floating WhatsApp button with pulse animation */
-    .whatsapp-float {
-      position: fixed !important;  /* ensures it's always fixed to screen */
-      width: 60px;
-      height: 60px;
-      bottom: 20px;
-      right: 20px;
-      background-color: #25d366;
-      color: #fff;
-      border-radius: 50%;
-      text-align: center;
-      font-size: 28px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      z-index: 2147483647; /* highest priority */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform .2s;
-      animation: pulse 1.8s infinite;
-    }
-    .whatsapp-float:hover {
-      transform: scale(1.1);
-      background-color: #20b954;
-    }
-    .whatsapp-float img {
-      width: 32px;
-      height: 32px;
-    }
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
-      }
-      70% {
-        box-shadow: 0 0 0 20px rgba(37, 211, 102, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
-      }
-    }
   </style>
 </head>
 <body>
@@ -92,15 +52,7 @@
     </form>
   </div>
 
-   <section class="card">
-      <h2>Our Services</h2>
-      <ul>
-        <li>👨‍⚕️ Surgical Consultations</li>
-        <li>📋 Second Opinions</li>
-        <li>💬 Post-surgery Support</li>
-        <li>⏱️ 24×7 Patient Assistance</li>
-      </ul>
-    </section>
+  
 
   
 <!-- Bottom Navigation -->
@@ -112,12 +64,6 @@
   </nav>
 
   <script src="assets/script.js"></script>
-
-  <!-- Floating WhatsApp button -->
-  <a href="https://wa.me/9108062182411?text=Hi%20AskSurgeons%20Team,%20I%20need%20a%20Free%20Second%20Opinion." 
-     class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-  </a>
 
   <div id="toast"></div>
   <script>
@@ -172,15 +118,6 @@
       .finally(() => { btn.disabled = false; btn.textContent = 'Send Enquiry'; });
     });
 
-    // Hide WhatsApp button while typing in form
-    document.querySelectorAll('input, textarea').forEach(field => {
-      field.addEventListener('focus', () => {
-        whatsappBtn.style.display = 'none';
-      });
-      field.addEventListener('blur', () => {
-        whatsappBtn.style.display = 'flex';
-      });
-    });
   </script>
 
   
