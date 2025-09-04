@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Appointment Enquiry - AskSurgeons.com</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family:'Segoe UI',sans-serif; margin:0; background:#F4F8FC; color:#0A2A4A; }
+    header { background:#1D75BC; color:#fff; padding:25px; text-align:center; font-size:24px; font-weight:bold; }
+    .container { max-width:600px; margin:40px auto; background:#fff; padding:30px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.08); }
+    label { font-weight:600; margin-bottom:6px; color:#0A2A4A; display:block; }
+    input, textarea { width:100%; padding:12px; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:10px; font-size:15px; transition:border-color .2s, box-shadow .2s; }
+    input:focus, textarea:focus { outline:none; border-color:#1D75BC; box-shadow:0 0 0 3px rgba(29,117,188,.2); }
+    .error-text { color:#dc2626; font-size:13px; margin-bottom:12px; display:none; }
+    button { width:100%; padding:14px; background:#1D75BC; color:#fff; font-size:16px; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:background .2s, transform .1s; margin-top:10px; }
+    button:hover { background:#155c90; } button:active { transform:scale(0.98); }
+    button:disabled { background:#93c5fd; cursor:not-allowed; }
+    footer { background:#0A2A4A; color:#fff; text-align:center; padding:40px 20px; font-size:16px; line-height:1.8; margin-top:40px; }
+    footer strong { font-size:18px; display:block; margin-top:10px; }
+    footer a { color:#93c5fd; text-decoration:none; font-weight:600; } footer a:hover { text-decoration:underline; }
+    #toast { visibility:hidden; min-width:250px; margin-left:-125px; background-color:#333; color:#fff; text-align:center; border-radius:8px; padding:14px; position:fixed; z-index:9999; left:50%; bottom:30px; font-size:15px; opacity:0; transition:opacity .4s, bottom .4s; }
+    #toast.show { visibility:visible; opacity:1; bottom:50px; }
+    #toast.success { background-color:#16a34a; } #toast.error { background-color:#dc2626; }
+
+    /* Floating WhatsApp button with pulse animation */
+    .whatsapp-float {
+      position: fixed !important;  /* ensures it's always fixed to screen */
+      width: 60px;
+      height: 60px;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25d366;
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 28px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 2147483647; /* highest priority */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .2s;
+      animation: pulse 1.8s infinite;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      background-color: #20b954;
+    }
+    .whatsapp-float img {
+      width: 32px;
+      height: 32px;
+    }
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 20px rgba(37, 211, 102, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Appointment Enquiry</header>
+
+  <div class="container">
+    <form id="patientForm" novalidate>
+      <label>Name</label>
+      <input type="text" id="name" name="name" required>
+      <div id="nameError" class="error-text">Name is required.</div>
+
+      <label>Phone Number</label>
+      <input type="tel" id="phone" name="phone" required>
+      <div id="phoneError" class="error-text">Enter a valid 10-digit Indian phone number.</div>
+
+      <label>Email</label>
+      <input type="email" id="email" name="email">
+      <div id="emailError" class="error-text">Please enter a valid email address.</div>
+
+      <label>Message</label>
+      <textarea id="message" name="message" rows="4" required></textarea>
+      <div id="messageError" class="error-text">Message is required.</div>
+
+      <button type="submit" id="submitBtn">Send Enquiry</button>
+    </form>
+  </div>
+
+
+  <!-- Floating WhatsApp button -->
+  <a href="https://wa.me/9108062182411?text=Hi%20AskSurgeons%20Team,%20I%20need%20a%20Free%20Second%20Opinion." 
+     class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </a>
+
+  <div id="toast"></div>
+  <script>
+    const form = document.getElementById('patientForm');
+    const btn = document.getElementById('submitBtn');
+    const toast = document.getElementById('toast');
+    const whatsappBtn = document.querySelector('.whatsapp-float');
+
+    function showToast(msg, type='success') {
+      toast.textContent = msg;
+      toast.className = `show ${type}`;
+      setTimeout(() => toast.className = toast.className.replace('show',''), 4000);
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      document.querySelectorAll('.error-text').forEach(el => el.style.display='none');
+      let valid = true;
+
+      if (!form.name.value.trim()) {
+        document.getElementById('nameError').style.display='block'; valid=false;
+      }
+      if (!/^[6-9]\d{9}$/.test(form.phone.value.trim())) {
+        document.getElementById('phoneError').style.display='block'; valid=false;
+      }
+      if (!form.message.value.trim()) {
+        document.getElementById('messageError').style.display='block'; valid=false;
+      }
+
+      const emailVal = form.email.value.trim();
+      if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        document.getElementById('emailError').style.display='block'; valid=false;
+      }
+
+      if (!valid) return;
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Sending...';
+
+      fetch('https://script.google.com/macros/s/AKfycbxVT3_NEgcvGYZZAgEeOahRydyRZLkWLqTWJyZXRUl1okMJKRvW4TmldK4DxYKhgfvmrA/exec', {
+        method:'POST',
+        body: JSON.stringify({
+          name: form.name.value.trim(),
+          phone: form.phone.value.trim(),
+          email: form.email.value.trim(),
+          message: form.message.value.trim()
+        })
+      })
+      .then(res => res.text())
+      .then(() => { showToast('✅ Enquiry submitted successfully!', 'success'); form.reset(); })
+      .catch(() => { showToast('❌ Submission failed. Please try again.', 'error'); })
+      .finally(() => { btn.disabled = false; btn.textContent = 'Send Enquiry'; });
+    });
+
+    // Hide WhatsApp button while typing in form
+    document.querySelectorAll('input, textarea').forEach(field => {
+      field.addEventListener('focus', () => {
+        whatsappBtn.style.display = 'none';
+      });
+      field.addEventListener('blur', () => {
+        whatsappBtn.style.display = 'flex';
+      });
+    });
+  </script>
+  
+  
+</body>
+</html>
