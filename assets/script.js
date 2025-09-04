@@ -29,3 +29,17 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(nextSlide, 4000); // change every 4s
   }
 });
+
+// Keep your existing carousel code; add this below it
+document.addEventListener("DOMContentLoaded", () => {
+  const path = location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".bottom-nav a").forEach(a => {
+    const href = a.getAttribute("href");
+    if ((path === "" && href === "index.html") || href === path) {
+      a.classList.add("active");
+    } else {
+      a.classList.remove("active");
+    }
+  });
+});
+
