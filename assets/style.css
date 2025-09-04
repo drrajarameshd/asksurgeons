@@ -14,6 +14,7 @@ body {
   color: var(--text);
   padding-bottom: 70px; /* space for bottom nav */
 }
+
 /* Mobile Header */
 .mobile-header {
   background: var(--primary);
@@ -44,6 +45,14 @@ body {
   color: var(--accent);
 }
 
+/* Lists and pills */
+.list{list-style:none;margin-top:.5rem}
+.list li{margin:.4rem 0}
+.pill-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
+.pill{background:#eef7ff;color:#0b5480;border:1px solid #d5ecff;padding:.4rem .6rem;border-radius:999px;font-size:.85rem}
+
+/* Emphasis card */
+.card.emphasis{border-left:4px solid var(--primary)}
 
 /* Carousel */
 .carousel {
