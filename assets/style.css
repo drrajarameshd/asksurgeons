@@ -189,3 +189,27 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
   border-radius: 8px;
 }
 
+/* Spacing tweak */
+.mt8 { margin-top: .8rem; }
+
+/* Profile rows */
+.profile { display:flex; gap:.75rem; align-items:flex-start; margin:.75rem 0; }
+.avatar {
+  width:40px; height:40px; border-radius:50%;
+  background:#eef7ff; color:#0b5480; display:flex; align-items:center; justify-content:center;
+}
+.avatar i { font-size:1rem; }
+.profile-text h4 { margin:0 0 .2rem; color:var(--primary); font-size:1rem; }
+.profile-text p { margin:0; font-size:.95rem; color:#444; }
+
+/* Motto */
+.motto {
+  margin-top:.6rem; padding:.75rem 1rem; background:#f4fbff;
+  border:1px solid #d5ecff; border-radius:10px; display:flex; gap:.5rem; align-items:center; color:#0b5480;
+}
+.motto i { opacity:.8; }
+
+/* Already provided earlier:
+   .mobile-header, .card, .pill-grid, .pill, .list, .emphasis, .bottom-nav styles */
+
+
