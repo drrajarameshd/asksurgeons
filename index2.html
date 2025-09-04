@@ -1,4 +1,56 @@
-<section class="card">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AskSurgeons App</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="theme-color" content="#007BBF" />
+</head>
+<body>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AskSurgeons Logo" />
+    </div>
+    <div class="header-actions">
+      <i class="fas fa-search" aria-label="Search"></i>
+    </div>
+  </header>
+
+  <!-- Carousel -->
+  <section class="carousel" aria-label="Featured images">
+    <div class="slides">
+      <img src="assets/photo1.webp" alt="AskSurgeons care banner 1" />
+      <img src="assets/photo2.webp" alt="AskSurgeons care banner 2" />
+      <img src="assets/photo3.webp" alt="AskSurgeons care banner 3" />
+    </div>
+    <div class="dots" aria-hidden="true"></div>
+  </section>
+
+  <!-- Content -->
+  <main>
+
+    <!-- Intro -->
+    <section class="card">
+      <h2><i class="fa-solid fa-hospital-user"></i> Welcome to AskSurgeons</h2>
+      <p>At <strong>AskSurgeons.com</strong>, we bring you access to a trusted network of surgeons and physicians across Hyderabad. Our goal is to help you make informed choices about your health and surgery options.</p>
+    </section>
+
+    <!-- 1. Second Opinion -->
+    <section class="card">
+      <h3><i class="fa-solid fa-clipboard-check"></i> Second Opinion for Surgeries</h3>
+      <ul class="list">
+        <li>Detailed review of your medical reports, scans, and treatment plan.</li>
+        <li>Independent expert opinion from surgeons of the relevant specialty.</li>
+        <li>Helps avoid unnecessary surgeries or delays in urgent cases.</li>
+      </ul>
+    </section>
+
+   <section class="card">
   <h3><i class="fa-solid fa-user-doctor"></i> Specialist Consultations</h3>
   <p>We connect you to surgeons across multiple specialties, including:</p>
   <div class="pill-grid">
@@ -31,3 +83,68 @@
     </span>
   </div>
 </section>
+
+
+    <!-- 3. Transplant Guidance -->
+    <section class="card">
+      <h3><i class="fa-solid fa-kidneys"></i> Renal & Pancreatic Transplant Guidance</h3>
+      <p>Led by <strong>Dr. Karthik (MCh, PGI Chandigarh)</strong>, our team provides expert consultation and guidance for:</p>
+      <ul class="list">
+        <li>Kidney (Renal) Transplant</li>
+        <li>Pancreatic Transplant</li>
+        <li>AV Fistula for Dialysis Patients</li>
+      </ul>
+      <p>From pre-evaluation to surgery referral, we ensure patients receive the right care at the right time.</p>
+    </section>
+
+    <!-- 4. Hospital Referral -->
+    <section class="card">
+      <h3><i class="fa-solid fa-hospital"></i> Referral to Trusted Hospitals in Hyderabad</h3>
+      <ul class="list">
+        <li>Safe and ethical treatment</li>
+        <li>Advanced surgical facilities</li>
+        <li>Post-operative care and follow-up</li>
+      </ul>
+    </section>
+
+    <!-- 5. Patient Support -->
+    <section class="card">
+      <h3><i class="fa-solid fa-headset"></i> Patient Support & Guidance</h3>
+      <ul class="list">
+        <li>Clear explanation of treatment options in simple language</li>
+        <li>Help scheduling consultations with the right specialist</li>
+        <li>Ongoing medical guidance from <strong>Dr. Raja Ramesh, MD (Consultant Physician)</strong> and team</li>
+      </ul>
+    </section>
+
+    <!-- Promise -->
+    <section class="card emphasis">
+      <h3><i class="fa-solid fa-handshake-angle"></i> Our Promise</h3>
+      <p>✅ At AskSurgeons.com, our promise is <strong>clarity, trust, and expert guidance</strong>. Patients and families should never feel alone while making critical healthcare decisions.</p>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" aria-label="Bottom navigation">
+    <a href="index.html" class="active" aria-current="page">
+      <i class="fas fa-home"></i>
+      <small>Home</small>
+    </a>
+    <a href="about.html">
+      <i class="fas fa-user-md"></i>
+      <small>About</small>
+    </a>
+    <a href="services.html">
+      <i class="fas fa-stethoscope"></i>
+      <small>Services</small>
+    </a>
+    <a href="contact.html">
+      <i class="fas fa-phone"></i>
+      <small>Contact</small>
+    </a>
+  </nav>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
