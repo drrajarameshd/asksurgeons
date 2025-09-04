@@ -211,5 +211,22 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
 
 /* Already provided earlier:
    .mobile-header, .card, .pill-grid, .pill, .list, .emphasis, .bottom-nav styles */
+/*social links*/
+.social-links {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.social-links a {
+  font-size: 1.8rem;
+  color: #007BBF;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.social-links a:hover {
+  transform: scale(1.2);
+  color: #005a8c;
+}
 
 
