@@ -1,12 +1,14 @@
-// assets/chat.js
+// assets/chat.js (updated: patient-first-message => polite auto-reply + WA button)
 document.addEventListener("DOMContentLoaded", async () => {
+  const ASKSURGEONS_NUMBER = "918062182411"; // no plus
+  const WA_BASE = `https://wa.me/${ASKSURGEONS_NUMBER}?text=`;
+
   const params = new URLSearchParams(location.search);
   const idx = parseInt(params.get('doc') || "0", 10);
 
-  // load doctors data
   async function loadDoctors(){
     try {
-      const res = await fetch('doctors/data.json', {cache: "no-store"});
+      const res = await fetch('doctors/data.json', { cache: "no-store" });
       return await res.json();
     } catch (e) {
       console.error('Could not load doctors data', e);
@@ -15,68 +17,164 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const doctors = await loadDoctors();
-  const doctor = doctors[idx] || doctors[0] || { name: 'Doctor', speciality:'', image:'assets/logo.png', bio:'No details' };
+  const doctor = doctors[idx] || doctors[0] || {
+    name: 'Doctor', speciality:'', image:'assets/logo.png', bio:'No details'
+  };
 
-  // build header
+  // Build header
   const root = document.getElementById('chat-root');
   root.innerHTML = `
-    <header class="chat-header">
-      <button id="back-btn" aria-label="Back" style="background:transparent;border:none;color:white;font-size:1.1rem;margin-right:.5rem"><i class="fas fa-arrow-left"></i></button>
+    <header class="chat-header" role="banner">
+      <button id="back-btn" aria-label="Back" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
       <img class="avatar" src="${doctor.image}" alt="${doctor.name}" onerror="this.src='assets/logo.png'">
       <div class="meta">
         <div class="name">${doctor.name}</div>
         <div class="spec">${doctor.speciality}</div>
       </div>
       <div class="chat-actions">
-        <a href="tel:+918062182411" style="color:white"><i class="fas fa-phone"></i></a>
+        <a id="call-link" href="tel:+918062182411" style="color:white"><i class="fas fa-phone"></i></a>
       </div>
     </header>
   `;
-
   document.getElementById('back-btn').addEventListener('click', ()=> history.back());
 
   const area = document.getElementById('chat-area');
-
-  // show system message with full bio (like pinned message)
-  function addSystemMessage(html) {
-    const div = document.createElement('div');
-    div.className = 'msg system';
-    div.innerHTML = html;
-    area.appendChild(div);
-    area.scrollTop = area.scrollHeight;
-  }
-
-  function addMyMessage(text) {
-    const div = document.createElement('div');
-    div.className = 'msg me';
-    div.innerHTML = `<div>${escapeHtml(text)}</div><span class="time">${timeNow()}</span>`;
-    area.appendChild(div);
-    area.scrollTop = area.scrollHeight;
-  }
-
-  // escape tiny helper
-  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function timeNow(){ const d=new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
-
-  // render doctor bio as message HTML
-  const bioHtml = `
-    <strong>${doctor.name}</strong><br/>
-    <em>${doctor.speciality}</em><br/><br/>
-    ${doctor.bio.replace(/\n/g,'<br/>')}
-  `;
-  addSystemMessage(bioHtml);
-
-  // handle composer
   const input = document.getElementById('composer-input');
   const sendBtn = document.getElementById('send-btn');
-  sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', (e)=> { if (e.key === 'Enter') sendMessage(); });
 
-  function sendMessage(){
+  // helpers
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function timeNow(){ const d=new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
+
+  // create node that includes a WA connect button for system messages
+  function createSystemNodeWithWA(html, patientMsgForWA = '') {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'msg system';
+    const content = document.createElement('div');
+    content.className = 'msg-content';
+    content.innerHTML = html;
+    wrapper.appendChild(content);
+
+    const waBtn = document.createElement('button');
+    waBtn.className = 'wa-connect-btn';
+    waBtn.type = 'button';
+    waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Connect via WhatsApp';
+    waBtn.addEventListener('click', () => {
+      const waMessage = buildWhatsAppMessage(patientMsgForWA);
+      window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
+      showToast('Opening WhatsApp…');
+    });
+
+    wrapper.appendChild(waBtn);
+    area.appendChild(wrapper);
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function createMessageNode({html, cls='system'}) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `msg ${cls}`;
+    const inner = document.createElement('div');
+    inner.className = 'msg-content';
+    inner.innerHTML = html;
+    wrapper.appendChild(inner);
+
+    // add reply (wa) button for each message as before (optional)
+    const replyBtn = document.createElement('button');
+    replyBtn.className = 'reply-btn';
+    replyBtn.title = 'Send this to WhatsApp';
+    replyBtn.innerHTML = '<i class="fab fa-whatsapp"></i>';
+    replyBtn.addEventListener('click', () => {
+      const plainText = inner.textContent.trim();
+      const waMessage = buildWhatsAppMessage(plainText);
+      window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
+      showToast('Opening WhatsApp…');
+    });
+    wrapper.appendChild(replyBtn);
+
+    return wrapper;
+  }
+
+  function addSystemMessage(html) {
+    const node = createMessageNode({html, cls:'system'});
+    area.appendChild(node);
+    area.scrollTop = area.scrollHeight;
+  }
+  function addMyMessage(text) {
+    const html = `<div>${escapeHtml(text)}</div><span class="time">${timeNow()}</span>`;
+    const node = createMessageNode({html, cls:'me'});
+    area.appendChild(node);
+    area.scrollTop = area.scrollHeight;
+  }
+
+  // toast
+  function showToast(text='Opening WhatsApp…') {
+    let t = document.getElementById('as-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'as-toast';
+      t.className = 'as-toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = text;
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+  }
+
+  // build WA message
+  function buildWhatsAppMessage(patientText = '') {
+    const lines = [];
+    const plainDoctorName = doctor.name.replace(/^Dr\.\s*/i,'').trim();
+    lines.push(`Hi Dr. ${plainDoctorName},`);
+    lines.push('');
+    if (patientText && patientText.length) {
+      const truncated = patientText.length > 800 ? patientText.slice(0,800) + '...' : patientText;
+      lines.push(`My query: ${truncated}`);
+    } else {
+      lines.push(`I would like to discuss my case with you.`);
+    }
+    lines.push('');
+    lines.push(`Doctor specialty: ${doctor.speciality}`);
+    lines.push('');
+    lines.push(`— Sent via AskSurgeons`);
+    return lines.join('\n');
+  }
+
+  // Initial doctor bio as a system message (with small reply button)
+  const bioHtml = `<strong>${escapeHtml(doctor.name)}</strong><br/><em>${escapeHtml(doctor.speciality)}</em><br/><br/>${escapeHtml(doctor.bio).replace(/\n/g,'<br/>')}`;
+  addSystemMessage(bioHtml);
+
+  // Track if auto-reply already shown for this doctor in this session
+  const sessionKey = `as_auto_reply_shown_doc_${idx}`;
+  const autoReplyShown = sessionStorage.getItem(sessionKey) === '1';
+
+  // Composer behavior
+  sendBtn.addEventListener('click', onComposerSend);
+  input.addEventListener('keydown', (e)=> { if (e.key === 'Enter') onComposerSend(); });
+
+  function onComposerSend() {
     const text = input.value.trim();
     if (!text) return;
+    // add to chat locally
     addMyMessage(text);
     input.value = '';
-    // For now, messages are local only. You can integrate API here for real chat.
+
+    // If this is the first message this session for this doctor, show polite auto-reply and WA connect button
+    if (!autoReplyShown) {
+      // refined polite message
+      const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
+      // create a system message with WA connect button; the button will send the patient's message alongside doctor details
+      createSystemNodeWithWA(polite, text);
+
+      // remember in session
+      sessionStorage.setItem(sessionKey, '1');
+    } else {
+      // for subsequent messages, show a subtle system tip (optional)
+      const tipHtml = `<em>Tip:</em> Tap the WhatsApp button on any message to continue on WhatsApp with AskSurgeons.`;
+      addSystemMessage(tipHtml);
+    }
   }
+
+  // make sure composer is focused
+  input && input.focus();
 });
