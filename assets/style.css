@@ -270,3 +270,9 @@ button{ cursor:pointer }
 .social-links{display:flex;justify-content:space-around;margin-top:10px}
 .social-links a{font-size:1.6rem;color:var(--primary);transition:transform .18s,color .18s}
 .social-links a:hover{transform:scale(1.12);color:var(--primary-dark)}
+
+/* Reserve space at the bottom so content never hides behind bottom-nav */
+body {
+  padding-bottom: 90px; /* navbar height (60px) + extra gap */
+}
+
