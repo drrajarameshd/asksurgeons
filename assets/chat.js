@@ -1,4 +1,4 @@
-// assets/chat.js (updated: patient-first-message => polite auto-reply + WA button)
+// assets/chat.js (updated: WA button only on auto-reply; composer fixed)
 document.addEventListener("DOMContentLoaded", async () => {
   const ASKSURGEONS_NUMBER = "918062182411"; // no plus
   const WA_BASE = `https://wa.me/${ASKSURGEONS_NUMBER}?text=`;
@@ -46,7 +46,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function timeNow(){ const d=new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
 
-  // create node that includes a WA connect button for system messages
+  // create simple message node (no WA button)
+  function createMessageNodeSimple({html, cls='system'}) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `msg ${cls}`;
+    const inner = document.createElement('div');
+    inner.className = 'msg-content';
+    inner.innerHTML = html;
+    wrapper.appendChild(inner);
+    return wrapper;
+  }
+
+  // create system node with WA connect button (only used for the polite auto-reply)
   function createSystemNodeWithWA(html, patientMsgForWA = '') {
     const wrapper = document.createElement('div');
     wrapper.className = 'msg system';
@@ -61,47 +72,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Connect via WhatsApp';
     waBtn.addEventListener('click', () => {
       const waMessage = buildWhatsAppMessage(patientMsgForWA);
-      window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
       showToast('Opening WhatsApp…');
+      window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
     });
 
     wrapper.appendChild(waBtn);
-    area.appendChild(wrapper);
-    area.scrollTop = area.scrollHeight;
-  }
-
-  function createMessageNode({html, cls='system'}) {
-    const wrapper = document.createElement('div');
-    wrapper.className = `msg ${cls}`;
-    const inner = document.createElement('div');
-    inner.className = 'msg-content';
-    inner.innerHTML = html;
-    wrapper.appendChild(inner);
-
-    // add reply (wa) button for each message as before (optional)
-    const replyBtn = document.createElement('button');
-    replyBtn.className = 'reply-btn';
-    replyBtn.title = 'Send this to WhatsApp';
-    replyBtn.innerHTML = '<i class="fab fa-whatsapp"></i>';
-    replyBtn.addEventListener('click', () => {
-      const plainText = inner.textContent.trim();
-      const waMessage = buildWhatsAppMessage(plainText);
-      window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
-      showToast('Opening WhatsApp…');
-    });
-    wrapper.appendChild(replyBtn);
-
     return wrapper;
   }
 
   function addSystemMessage(html) {
-    const node = createMessageNode({html, cls:'system'});
+    const node = createMessageNodeSimple({html, cls:'system'});
     area.appendChild(node);
     area.scrollTop = area.scrollHeight;
   }
   function addMyMessage(text) {
     const html = `<div>${escapeHtml(text)}</div><span class="time">${timeNow()}</span>`;
-    const node = createMessageNode({html, cls:'me'});
+    const node = createMessageNodeSimple({html, cls:'me'});
     area.appendChild(node);
     area.scrollTop = area.scrollHeight;
   }
@@ -140,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return lines.join('\n');
   }
 
-  // Initial doctor bio as a system message (with small reply button)
+  // Initial doctor bio as a system message (without WA)
   const bioHtml = `<strong>${escapeHtml(doctor.name)}</strong><br/><em>${escapeHtml(doctor.speciality)}</em><br/><br/>${escapeHtml(doctor.bio).replace(/\n/g,'<br/>')}`;
   addSystemMessage(bioHtml);
 
@@ -160,21 +146,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     input.value = '';
 
     // If this is the first message this session for this doctor, show polite auto-reply and WA connect button
-    if (!autoReplyShown) {
-      // refined polite message
+    if (!sessionStorage.getItem(sessionKey)) {
       const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
-      // create a system message with WA connect button; the button will send the patient's message alongside doctor details
-      createSystemNodeWithWA(polite, text);
-
-      // remember in session
+      const node = createSystemNodeWithWA(polite, text);
+      area.appendChild(node);
+      area.scrollTop = area.scrollHeight;
       sessionStorage.setItem(sessionKey, '1');
     } else {
-      // for subsequent messages, show a subtle system tip (optional)
-      const tipHtml = `<em>Tip:</em> Tap the WhatsApp button on any message to continue on WhatsApp with AskSurgeons.`;
+      // optional subtle system tip
+      const tipHtml = `<em>Tip:</em> Use the WhatsApp button above to continue on WhatsApp with AskSurgeons.`;
       addSystemMessage(tipHtml);
     }
   }
 
-  // make sure composer is focused
+  // focus composer input on load
   input && input.focus();
 });
