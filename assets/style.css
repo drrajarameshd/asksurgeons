@@ -274,29 +274,10 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
 .msg.me { margin-left:auto; background:var(--primary); color:white; border-radius:12px 12px 6px 12px; }
 .msg.time { display:block; font-size:0.75rem; color:#666; margin-top:0.35rem; }
 
-/* composer */
-.composer {
-  position:fixed; left:8px; right:8px; bottom:18px; z-index:1200;
-  display:flex; gap:0.5rem; align-items:center;
-}
-.composer input {
-  flex:1; padding:0.9rem 1rem; border-radius:999px; border:1px solid #e6e6e6;
-  background:white; font-size:0.95rem;
-}
-.composer button {
-  background:var(--primary); color:white; border:none; padding:0.7rem 0.9rem; border-radius:999px; font-size:1rem;
-  box-shadow:0 4px 10px rgba(0,0,0,0.12);
-}
+/* Ensure regular messages do NOT show reply buttons */
+.msg .reply-btn { display: none !important; }
 
-/* small screens */
-@media (max-width:360px) {
-  .wa-avatar{width:44px;height:44px;}
-  .chat-header .meta .name{font-size:0.95rem;}
-}
-
-/*whatsapp message in chat*/
-
-/* WA connect button in auto-reply */
+/* WA connect button (only used in auto-reply) */
 .wa-connect-btn {
   display: inline-flex;
   gap: 8px;
@@ -315,15 +296,53 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
 }
 .wa-connect-btn i { font-size: 1.05rem; }
 
-/* ensure message content has room for reply btn */
-.msg .msg-content { padding-right: 44px; }
+/* Composer: prevent overflow and keep it above bottom navigation */
+.composer {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: 80px; /* leave room for bottom-nav floating (12px) + safe area */
+  z-index: 1200;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
 
-/* existing toast (.as-toast) used; if missing, add: */
+/* Make input flex properly and not overflow */
+.composer input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #e6e6e6;
+  background: white;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  max-height: 56px;
+}
+
+/* Send button */
+.composer button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:0.7rem 0.9rem;
+  border-radius:999px;
+  font-size:1rem;
+  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* If bottom nav present, ensure composer doesn't overlap nav on very small screens */
+@media (max-width: 360px) {
+  .composer { bottom: 92px; }
+}
+
+/* Toast (if not already present) */
 .as-toast {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 92px;
+  bottom: 150px;
   background: rgba(0,0,0,0.85);
   color: white;
   padding: 0.6rem 1rem;
@@ -335,6 +354,14 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
   z-index: 2000;
 }
 .as-toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); pointer-events: auto; }
+
+
+
+/************************************************* small screens ***************************************************************************************/
+@media (max-width:360px) {
+  .wa-avatar{width:44px;height:44px;}
+  .chat-header .meta .name{font-size:0.95rem;}
+}
 
 
 
