@@ -305,7 +305,7 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
 /* Composer: prevent overflow and keep it above bottom navigation */
 .composer {
   position: fixed;
-  left: 24px;
+  left: 12px;
   right: 8px;
   bottom: 80px; /* leave room for bottom-nav floating (12px) + safe area */
   z-index: 1200;
@@ -374,20 +374,6 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
 :root {
   --composer-bottom-with-nav: calc(80px + env(safe-area-inset-bottom)); /* default */
   --composer-bottom-no-nav: calc(18px + env(safe-area-inset-bottom));   /* when nav hidden / keyboard visible */
-}
-
-/* Base composer */
-.composer {
-  position: fixed;
-  left: 8px;
-  right: 8px;
-  bottom: var(--composer-bottom-with-nav);
-  z-index: 1200;
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  transition: bottom 220ms cubic-bezier(.2,.9,.2,1), transform 160ms ease;
-  will-change: bottom, transform;
 }
 
 /* When nav is hidden (keyboard open) — composer moves up closer to keyboard edge */
