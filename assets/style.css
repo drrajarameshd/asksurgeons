@@ -170,6 +170,12 @@ body {
 /* Make current tab icon/text stronger */
 .bottom-nav a.active { color: var(--primary); font-weight: 600; }
 
+/* Hidden state for bottom nav */
+.bottom-nav.hide {
+  display: none !important;
+}
+
+
 /* Prevent content hiding behind sticky header on anchor jumps */
 :target { scroll-margin-top: 64px; }
 
