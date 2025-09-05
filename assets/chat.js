@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const doctor = doctors[idx] || doctors[0] || {
     name: "Doctor",
     speciality: "",
-    image: "assets/logo.png",
+    image: "assets/logo2.png",
     bio: "No details available."
   };
 
