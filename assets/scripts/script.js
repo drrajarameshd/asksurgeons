@@ -27,7 +27,7 @@ function onIdle(cb) {
 (function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
+      navigator.serviceWorker.register('/sw.js')
         .then(reg => {
           if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           reg.addEventListener('updatefound', () => {
