@@ -1,4 +1,4 @@
-// assets/chat.js (updated: WA button only on auto-reply; composer fixed)
+// assets/chat.js (sessionStorage version - chat lasts only for current app/tab session)
 document.addEventListener("DOMContentLoaded", async () => {
   const ASKSURGEONS_NUMBER = "918062182411"; // no plus
   const WA_BASE = `https://wa.me/${ASKSURGEONS_NUMBER}?text=`;
@@ -21,8 +21,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     name: 'Doctor', speciality:'', image:'assets/logo.png', bio:'No details'
   };
 
-  // Build header
+  // sessionStorage key per doctor
+  const STORAGE_KEY = `as_chat_doc_${idx}`;
+
+  // Helpers
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function timeNow(){ const d=new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
+
+  // sessionStorage functions
+  function loadMessagesFromSession() {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn('Failed to parse stored messages from sessionStorage', e);
+      return null;
+    }
+  }
+
+  function saveMessagesToSession(messages) {
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); }
+    catch (e) { console.warn('Failed to save messages to sessionStorage', e); }
+  }
+
+  // DOM
   const root = document.getElementById('chat-root');
+  const area = document.getElementById('chat-area');
+  const input = document.getElementById('composer-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  // Build header
   root.innerHTML = `
     <header class="chat-header" role="banner">
       <button id="back-btn" aria-label="Back" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
@@ -38,61 +67,49 @@ document.addEventListener("DOMContentLoaded", async () => {
   `;
   document.getElementById('back-btn').addEventListener('click', ()=> history.back());
 
-  const area = document.getElementById('chat-area');
-  const input = document.getElementById('composer-input');
-  const sendBtn = document.getElementById('send-btn');
-
-  // helpers
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function timeNow(){ const d=new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
-
-  // create simple message node (no WA button)
-  function createMessageNodeSimple({html, cls='system'}) {
+  // UI builders
+  function createMsgNode(msg) {
     const wrapper = document.createElement('div');
-    wrapper.className = `msg ${cls}`;
+    wrapper.className = `msg ${msg.type === 'me' ? 'me' : 'system'}`;
     const inner = document.createElement('div');
     inner.className = 'msg-content';
-    inner.innerHTML = html;
+    inner.innerHTML = msg.content;
     wrapper.appendChild(inner);
+
+    if (msg.type === 'auto_reply') {
+      const waBtn = document.createElement('button');
+      waBtn.className = 'wa-connect-btn';
+      waBtn.type = 'button';
+      waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Connect via WhatsApp';
+      waBtn.addEventListener('click', () => {
+        const patientText = msg.meta && msg.meta.patientMsg ? msg.meta.patientMsg : '';
+        const waMessage = buildWhatsAppMessage(patientText);
+        showToast('Opening WhatsApp…');
+        window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
+      });
+      wrapper.appendChild(waBtn);
+    }
+
+    if (msg.type === 'me') {
+      const t = document.createElement('span');
+      t.className = 'time';
+      t.textContent = msg.time || timeNow();
+      inner.appendChild(t);
+    }
+
     return wrapper;
   }
 
-  // create system node with WA connect button (only used for the polite auto-reply)
-  function createSystemNodeWithWA(html, patientMsgForWA = '') {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'msg system';
-    const content = document.createElement('div');
-    content.className = 'msg-content';
-    content.innerHTML = html;
-    wrapper.appendChild(content);
-
-    const waBtn = document.createElement('button');
-    waBtn.className = 'wa-connect-btn';
-    waBtn.type = 'button';
-    waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Connect via WhatsApp';
-    waBtn.addEventListener('click', () => {
-      const waMessage = buildWhatsAppMessage(patientMsgForWA);
-      showToast('Opening WhatsApp…');
-      window.open(WA_BASE + encodeURIComponent(waMessage), '_blank');
+  function renderMessages(messages) {
+    area.innerHTML = '';
+    messages.forEach(m => {
+      const node = createMsgNode(m);
+      area.appendChild(node);
     });
-
-    wrapper.appendChild(waBtn);
-    return wrapper;
-  }
-
-  function addSystemMessage(html) {
-    const node = createMessageNodeSimple({html, cls:'system'});
-    area.appendChild(node);
-    area.scrollTop = area.scrollHeight;
-  }
-  function addMyMessage(text) {
-    const html = `<div>${escapeHtml(text)}</div><span class="time">${timeNow()}</span>`;
-    const node = createMessageNodeSimple({html, cls:'me'});
-    area.appendChild(node);
     area.scrollTop = area.scrollHeight;
   }
 
-  // toast
+  // Toast
   function showToast(text='Opening WhatsApp…') {
     let t = document.getElementById('as-toast');
     if (!t) {
@@ -107,7 +124,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     t._hideTimer = setTimeout(()=> t.classList.remove('show'), 2200);
   }
 
-  // build WA message
   function buildWhatsAppMessage(patientText = '') {
     const lines = [];
     const plainDoctorName = doctor.name.replace(/^Dr\.\s*/i,'').trim();
@@ -126,53 +142,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     return lines.join('\n');
   }
 
-  // Initial doctor bio as a system message (without WA)
-  const bioHtml = `<strong>${escapeHtml(doctor.name)}</strong><br/><em>${escapeHtml(doctor.speciality)}</em><br/><br/>${escapeHtml(doctor.bio).replace(/\n/g,'<br/>')}`;
-  addSystemMessage(bioHtml);
+  // Initialize messages from sessionStorage or fresh
+  let messages = loadMessagesFromSession();
+  if (!messages || !Array.isArray(messages)) {
+    messages = [];
+    const bioHtml = `<strong>${escapeHtml(doctor.name)}</strong><br/><em>${escapeHtml(doctor.speciality)}</em><br/><br/>${escapeHtml(doctor.bio).replace(/\n/g,'<br/>')}`;
+    messages.push({ type: 'bio', content: bioHtml, time: timeNow(), meta: {} });
+    saveMessagesToSession(messages);
+  }
 
-  // Track if auto-reply already shown for this doctor in this session
-  const sessionKey = `as_auto_reply_shown_doc_${idx}`;
-  const autoReplyShown = sessionStorage.getItem(sessionKey) === '1';
+  renderMessages(messages);
 
-  // Composer behavior
-  sendBtn.addEventListener('click', onComposerSend);
-  input.addEventListener('keydown', (e)=> { if (e.key === 'Enter') onComposerSend(); });
+  // Composer
+  sendBtn.addEventListener('click', onSend);
+  input.addEventListener('keydown', (e)=> { if (e.key === 'Enter') onSend(); });
 
-  function onComposerSend() {
+  function onSend() {
     const text = input.value.trim();
     if (!text) return;
-    // add to chat locally
-    addMyMessage(text);
+    const myMsg = { type: 'me', content: `<div>${escapeHtml(text)}</div>`, time: timeNow(), meta: {} };
+    messages.push(myMsg);
+    saveMessagesToSession(messages);
+    renderMessages(messages);
     input.value = '';
 
-    // If this is the first message this session for this doctor, show polite auto-reply and WA connect button
-    if (!sessionStorage.getItem(sessionKey)) {
+    const hasAuto = messages.some(m => m.type === 'auto_reply');
+    if (!hasAuto) {
       const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
-      const node = createSystemNodeWithWA(polite, text);
-      area.appendChild(node);
-      area.scrollTop = area.scrollHeight;
-      sessionStorage.setItem(sessionKey, '1');
+      const autoMsg = {
+        type: 'auto_reply',
+        content: polite,
+        time: timeNow(),
+        meta: { patientMsg: text } // store patient message to include in WA message
+      };
+      messages.push(autoMsg);
+      saveMessagesToSession(messages);
+      renderMessages(messages);
     } else {
-      // optional subtle system tip
-      const tipHtml = `<em>Tip:</em> Use the WhatsApp button above to continue on WhatsApp with AskSurgeons.`;
-      addSystemMessage(tipHtml);
+      const tip = { type: 'system', content: `<em>Tip:</em> Use the WhatsApp button above to continue on WhatsApp with AskSurgeons.`, time: timeNow(), meta:{} };
+      messages.push(tip);
+      saveMessagesToSession(messages);
+      renderMessages(messages);
     }
   }
 
-  // focus composer input on load
+  // focus composer input
   input && input.focus();
-});
-
-// Auto-hide bottom nav when keyboard is open (input focused)
-
-document.addEventListener('focusin', (e) => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    document.querySelector('.bottom-nav')?.classList.add('hide');
-  }
-});
-
-document.addEventListener('focusout', (e) => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    document.querySelector('.bottom-nav')?.classList.remove('hide');
-  }
 });
