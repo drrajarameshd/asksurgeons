@@ -294,5 +294,48 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
   .chat-header .meta .name{font-size:0.95rem;}
 }
 
+/*whatsapp message in chat*/
+
+/* WA connect button in auto-reply */
+.wa-connect-btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  background: #25D366; /* WhatsApp green */
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: 0 6px 14px rgba(37,211,102,0.18);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.wa-connect-btn i { font-size: 1.05rem; }
+
+/* ensure message content has room for reply btn */
+.msg .msg-content { padding-right: 44px; }
+
+/* existing toast (.as-toast) used; if missing, add: */
+.as-toast {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 92px;
+  background: rgba(0,0,0,0.85);
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 2000;
+}
+.as-toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); pointer-events: auto; }
+
+
 
 
