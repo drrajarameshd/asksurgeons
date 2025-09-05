@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   root.innerHTML = `
     <header class="chat-header" role="banner">
       <button id="back-btn" aria-label="Back" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
-      <img class="avatar" src="${esc(doctor.image)}" alt="${esc(doctor.name)}" onerror="this.src='assets/logo.png'">
+      <img class="avatar" src="${esc(doctor.image)}" alt="${esc(doctor.name)}" onerror="this.src='assets/logos/logo.png'">
       <div class="meta">
         <div class="name">${esc(doctor.name)}</div>
         <div class="spec">${esc(doctor.speciality)}</div>
