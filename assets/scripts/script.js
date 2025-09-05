@@ -24,26 +24,30 @@ function onIdle(cb) {
 }
 
 /* ----------------------------- Service Worker Registration ----------------------------- */
-(function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => {
-          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          reg.addEventListener('updatefound', () => {
-            const newSW = reg.installing;
-            newSW.addEventListener('statechange', () => {
-              if (newSW.state === 'installed') {
-                console.log('New service worker installed.');
-              }
-            });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => {
+        console.log('Service Worker registered:', reg);
+
+        // optional: listen for updates
+        if (reg.waiting) {
+          console.log('New service worker waiting');
+        }
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('New version available – reload to update');
+            }
           });
-          console.log('Service worker registered:', reg);
-        })
-        .catch(err => console.warn('SW registration failed:', err));
-    }, { passive: true });
-  }
-})();
+        });
+      })
+      .catch(err => console.error('Service Worker registration failed:', err));
+  });
+}
+
 
 /* ----------------------------- Bottom-nav active highlight ----------------------------- */
 (function highlightBottomNav() {
