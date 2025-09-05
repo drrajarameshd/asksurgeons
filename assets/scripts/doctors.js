@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const li = document.createElement('li');
       li.className = 'wa-item';
       li.innerHTML = `
-        <img class="wa-avatar" loading="lazy" src="${doc.image}" alt="${doc.name}" onerror="this.src='assets/logo2.png'">
+        <img class="wa-avatar" loading="lazy" src="${doc.image}" alt="${doc.name}" onerror="this.src='assets/logo/logo2.png'">
         <div class="wa-body">
           <div class="wa-top">
             <div class="wa-name">${doc.name}</div>
