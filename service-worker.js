@@ -18,15 +18,15 @@ const PRECACHE_URLS = [
   '/doctors.html',
   '/manifest.json',
   '/assets/style.css',
-  '/assets/script.js',
-  '/assets/doctors.js',
-  '/assets/chat.js',
-  '/assets/logo.png',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png',
-  '/assets/photo1.jpg',
-  '/assets/photo2.jpg',
-  '/assets/photo3.jpg',
+  '/assets/scripts/script.js',
+  '/assets/scripts/doctors.js',
+  '/assets/scripts/chat.js',
+  '/assets/logos/logo.png',
+  '/assets/icons/icon-192.png',
+  '/assets/icons/icon-512.png',
+  '/assets/photos/photo1.jpg',
+  '/assets/photos/photo2.jpg',
+  '/assets/photos/photo3.jpg',
   '/doctors/data.json',
   '/offline.html' // fallback page included in precache
 ];
@@ -136,7 +136,7 @@ self.addEventListener('fetch', event => {
               return networkResp;
             }).catch(() => {
               // fallback to a local placeholder (logo) if image missing
-              return caches.match('/assets/logo.png');
+              return caches.match('/assets/logos/logo.png');
             });
           })
         )
