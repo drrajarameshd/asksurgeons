@@ -25,28 +25,6 @@ function onIdle(cb) {
 
 /* ----------------------------- Service Worker Registration ----------------------------- */
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .then(reg => {
-        console.log('Service Worker registered:', reg);
-
-        // optional: listen for updates
-        if (reg.waiting) {
-          console.log('New service worker waiting');
-        }
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('New version available – reload to update');
-            }
-          });
-        });
-      })
-      .catch(err => console.error('Service Worker registration failed:', err));
-  });
-}
 
 
 /* ----------------------------- Bottom-nav active highlight ----------------------------- */
