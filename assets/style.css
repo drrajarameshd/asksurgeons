@@ -368,6 +368,55 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
   .wa-avatar{width:44px;height:44px;}
   .chat-header .meta .name{font-size:0.95rem;}
 }
+/**********Enhancements******/
+
+/* Composer positioning enhancements (smooth reposition when bottom nav hides) */
+:root {
+  --composer-bottom-with-nav: calc(80px + env(safe-area-inset-bottom)); /* default */
+  --composer-bottom-no-nav: calc(18px + env(safe-area-inset-bottom));   /* when nav hidden / keyboard visible */
+}
+
+/* Base composer */
+.composer {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: var(--composer-bottom-with-nav);
+  z-index: 1200;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  transition: bottom 220ms cubic-bezier(.2,.9,.2,1), transform 160ms ease;
+  will-change: bottom, transform;
+}
+
+/* When nav is hidden (keyboard open) — composer moves up closer to keyboard edge */
+.composer.nav-hidden {
+  bottom: var(--composer-bottom-no-nav);
+}
+
+/* Small tweak for very small screens */
+@media (max-width: 360px) {
+  :root {
+    --composer-bottom-with-nav: calc(92px + env(safe-area-inset-bottom));
+    --composer-bottom-no-nav: calc(20px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Keep composer input non-overflowing */
+.composer input {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-height: 56px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Optional small transform when focusing, for better visual feedback */
+.composer.input-focused {
+  transform: translateY(-2px);
+}
+
 
 
 
