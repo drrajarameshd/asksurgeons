@@ -162,3 +162,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   // focus composer input on load
   input && input.focus();
 });
+
+// Auto-hide bottom nav when keyboard is open (input focused)
+
+document.addEventListener('focusin', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    document.querySelector('.bottom-nav')?.classList.add('hide');
+  }
+});
+
+document.addEventListener('focusout', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    document.querySelector('.bottom-nav')?.classList.remove('hide');
+  }
+});
