@@ -305,7 +305,7 @@ a:focus-visible, button:focus-visible, .mobile-header .header-actions i:focus-vi
 /* Composer: prevent overflow and keep it above bottom navigation */
 .composer {
   position: fixed;
-  left: 8px;
+  left: 12px;
   right: 8px;
   bottom: 80px; /* leave room for bottom-nav floating (12px) + safe area */
   z-index: 1200;
