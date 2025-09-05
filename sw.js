@@ -1,6 +1,6 @@
-// sw.js - AskSurgeons Service Worker (drop-in copy/paste)
-// Version changes force update; change when you want clients to update.
-const SW_VERSION = 'asksurgeons-v1.2025-09-05';
+// sw.js - AskSurgeons (multi-page friendly)
+// Version bump to force update when you change this file.
+const SW_VERSION = 'asksurgeons-v1.2025-09-06';
 
 // Cache names
 const PRECACHE = `${SW_VERSION}-precache`;
@@ -8,9 +8,9 @@ const RUNTIME = `${SW_VERSION}-runtime`;
 const IMAGE_CACHE = `${SW_VERSION}-images`;
 const DATA_CACHE = `${SW_VERSION}-data`;
 
-// Files to precache (app shell)
+// Files to precache (app shell + important pages)
 const PRECACHE_URLS = [
-  '/', // start_url must be cached & controlled
+  '/',              // start_url - must be cached & controlled
   '/index.html',
   '/about.html',
   '/services.html',
@@ -31,17 +31,16 @@ const PRECACHE_URLS = [
   '/offline.html'
 ];
 
-// Limits for image cache
+// Image cache limits
 const IMAGE_CACHE_MAX_ENTRIES = 60;
-const IMAGE_CACHE_MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
+const IMAGE_CACHE_MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-// Utility: trim cache to max entries (FIFO)
+// Utility: trim cache to a max number of entries (FIFO)
 async function trimCache(cacheName, maxItems) {
   try {
     const cache = await caches.open(cacheName);
     const keys = await cache.keys();
     if (keys.length <= maxItems) return;
-    // delete oldest until under limit
     const removeCount = keys.length - maxItems;
     for (let i = 0; i < removeCount; i++) {
       await cache.delete(keys[i]);
@@ -51,7 +50,7 @@ async function trimCache(cacheName, maxItems) {
   }
 }
 
-// Utility: delete items older than maxAge (optional cleanup)
+// Utility: remove entries older than maxAgeMs (optional)
 async function removeOldEntries(cacheName, maxAgeMs) {
   try {
     const cache = await caches.open(cacheName);
@@ -68,11 +67,34 @@ async function removeOldEntries(cacheName, maxAgeMs) {
       }
     }
   } catch (e) {
-    // not fatal
+    // non-fatal cleanup
   }
 }
 
-// Install: safer precache that logs missing resources
+// Create aliases in precache so requests like '/doctors' match '/doctors.html'
+async function createPrecacheAliases() {
+  try {
+    const cache = await caches.open(PRECACHE);
+    const aliasMap = [
+      { from: '/doctors', to: '/doctors.html' },
+      { from: '/doctors/', to: '/doctors.html' },
+      { from: '/about', to: '/about.html' },
+      { from: '/services', to: '/services.html' },
+      { from: '/contact', to: '/contact.html' }
+      // add more aliases if you have other "extensionless" routes
+    ];
+    for (const a of aliasMap) {
+      const resp = await cache.match(a.to);
+      if (resp) {
+        await cache.put(a.from, resp.clone());
+      }
+    }
+  } catch (e) {
+    console.warn('createPrecacheAliases failed', e);
+  }
+}
+
+// Install: precache resources (safe: logs failures)
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil((async () => {
@@ -80,7 +102,7 @@ self.addEventListener('install', event => {
     const failed = [];
     for (const url of PRECACHE_URLS) {
       try {
-        // use no-store to ensure we fetch fresh versions during install
+        // fetch fresh during install
         const res = await fetch(url, { cache: 'no-store' });
         if (!res || !res.ok) throw new Error(`${res ? res.status : 'no-response'}`);
         await cache.put(url, res.clone());
@@ -89,16 +111,18 @@ self.addEventListener('install', event => {
         console.warn('Precache failed for', url, err);
       }
     }
+    // Create alias entries to support extensionless routes like /doctors
+    await createPrecacheAliases();
+
     if (failed.length) {
-      // We do NOT throw here to allow SW to install in development; uncomment to enforce precache
+      // We don't abort install by default to allow development; uncomment to enforce.
       // throw new Error('Precache failed: ' + JSON.stringify(failed));
-      // But log an explicit summary for debugging:
-      console.warn('Precache encountered failures (see above). Files missing may prevent offline behavior or installability:', failed);
+      console.warn('Precache encountered failures:', failed);
     }
   })());
 });
 
-// Activate: cleanup old caches and claim clients
+// Activate: cleanup and claim clients
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     clients.claim();
@@ -107,12 +131,12 @@ self.addEventListener('activate', event => {
       keys.filter(k => ![PRECACHE, RUNTIME, IMAGE_CACHE, DATA_CACHE].includes(k))
           .map(k => caches.delete(k))
     );
-    // optional: cleanup old entries in image cache
+    // optional: cleanup old image entries by age
     removeOldEntries(IMAGE_CACHE, IMAGE_CACHE_MAX_AGE);
   })());
 });
 
-// Helper to determine if request expects JSON
+// Helper: detect JSON/API requests
 function isJSONRequest(request) {
   try {
     const accept = request.headers.get('Accept') || '';
@@ -122,44 +146,66 @@ function isJSONRequest(request) {
   }
 }
 
-// Fetch handler
+// Fetch handler with multi-page navigation support
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle same-origin requests with our runtime strategies here
+  // Handle same-origin resources with runtime strategies
   if (url.origin === location.origin) {
 
-    // NAVIGATION (page loads) -> prefer cache (app shell), fallback network, then offline.html
+    // NAVIGATION - multi-page friendly
     if (request.mode === 'navigate') {
       event.respondWith((async () => {
-        // 1. try exact match in cache
-        const cachedNav = await caches.match(request);
-        if (cachedNav) return cachedNav;
+        // 1) Try exact match (covers alias keys too)
+        const exact = await caches.match(request);
+        if (exact) return exact;
 
-        // 2. try cached start page explicit (/) or index.html
-        const start = await caches.match('/') || await caches.match('/index.html');
-        if (start) return start;
+        // 2) Try common multi-page variants: /foo -> /foo.html and /foo/index.html
+        try {
+          const pathname = url.pathname.replace(/\/+$/, ''); // remove trailing slash
+          if (pathname && pathname !== '') {
+            const base = pathname.startsWith('/') ? pathname : `/${pathname}`;
+            const candidates = [
+              `${base}.html`,
+              `${base}/index.html`,
+              `${base}.html`.replace(/^\//, ''),
+              `${base}/index.html`.replace(/^\//, '')
+            ];
+            for (const cand of candidates) {
+              const resp = await caches.match(cand);
+              if (resp) return resp;
+            }
+          }
+        } catch (e) {
+          // ignore and continue to shell/network
+        }
 
-        // 3. network and cache result
+        // 3) Fallback to the app shell (index.html or root) as last resort
+        const shell = await caches.match('/index.html') || await caches.match('/');
+        if (shell) return shell;
+
+        // 4) Network fallback and cache if succeeds
         try {
           const networkResponse = await fetch(request);
-          const cache = await caches.open(RUNTIME);
-          // only cache successful HTML responses
           if (networkResponse && networkResponse.ok && networkResponse.type === 'basic') {
-            cache.put(request, networkResponse.clone());
+            const runtimeCache = await caches.open(RUNTIME);
+            runtimeCache.put(request, networkResponse.clone());
           }
           return networkResponse;
         } catch (err) {
-          // offline fallback
+          // 5) Final fallback: offline page
           const offline = await caches.match('/offline.html');
-          return offline || new Response('<h1>Offline</h1><p>The app is offline and no offline page is cached.</p>', { headers: { 'Content-Type': 'text/html' }});
+          if (offline) return offline;
+          return new Response('<h1>Offline</h1><p>Page not available offline.</p>', {
+            headers: { 'Content-Type': 'text/html' }, status: 503
+          });
         }
       })());
       return;
     }
 
-    // API / JSON -> network-first, fallback to cache, fallback to doctors/data.json
+    // API / JSON -> network-first, fallback to cache, fallback to /doctors/data.json
     if (isJSONRequest(request)) {
       event.respondWith((async () => {
         try {
@@ -172,16 +218,17 @@ self.addEventListener('fetch', event => {
         } catch (err) {
           const cached = await caches.match(request);
           if (cached) return cached;
-          // fallback to known static data file if present
           const fallback = await caches.match('/doctors/data.json');
           if (fallback) return fallback;
-          return new Response(JSON.stringify({ error: 'offline' }), { status: 503, headers: { 'Content-Type': 'application/json' }});
+          return new Response(JSON.stringify({ error: 'offline' }), {
+            status: 503, headers: { 'Content-Type': 'application/json' }
+          });
         }
       })());
       return;
     }
 
-    // CSS & JS -> stale-while-revalidate (serve cache if present, update in background)
+    // CSS & JS -> stale-while-revalidate
     if (request.destination === 'style' || request.destination === 'script') {
       event.respondWith((async () => {
         const cache = await caches.open(RUNTIME);
@@ -194,57 +241,4 @@ self.addEventListener('fetch', event => {
             }
             return networkResp;
           } catch (e) {
-            return undefined;
-          }
-        })();
-        // return cached if available, otherwise await network
-        return cachedResp || await networkFetch || new Response('', { status: 504 });
-      })());
-      return;
-    }
-
-    // Images -> cache-first with max entries and fallback
-    if (request.destination === 'image' || /\.(png|jpg|jpeg|webp|svg|gif)$/.test(url.pathname)) {
-      event.respondWith((async () => {
-        const cache = await caches.open(IMAGE_CACHE);
-        const cached = await cache.match(request);
-        if (cached) return cached;
-        try {
-          const networkResp = await fetch(request);
-          if (networkResp && networkResp.ok) {
-            cache.put(request, networkResp.clone());
-            // trim cache (non-blocking)
-            trimCache(IMAGE_CACHE, IMAGE_CACHE_MAX_ENTRIES).catch(() => {});
-          }
-          return networkResp;
-        } catch (err) {
-          // fallback to a cached logo or a simple placeholder response
-          const fallback = await caches.match('/assets/logos/logo.png');
-          if (fallback) return fallback;
-          return new Response('', { status: 504 });
-        }
-      })());
-      return;
-    }
-  }
-
-  // Default handler: try network, fallback to cache
-  event.respondWith((async () => {
-    try {
-      return await fetch(request);
-    } catch (err) {
-      const cached = await caches.match(request);
-      if (cached) return cached;
-      // ultimate fallback: offline page for navigations handled above; here return network error response
-      return new Response('Network error', { status: 504 });
-    }
-  })());
-});
-
-// Support skipWaiting via postMessage from client
-self.addEventListener('message', event => {
-  if (!event.data) return;
-  if (event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
+            return undefi
