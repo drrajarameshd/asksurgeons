@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Chat - Doctor</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <meta name="theme-color" content="#007BBF" />
+</head>
+<body>
+
+  <!-- header built by script -->
+  <div id="chat-root"></div>
+
+  <!-- main chat area -->
+  <div class="chat-area" id="chat-area"></div>
+
+  <!-- composer -->
+  <div class="composer">
+    <input id="composer-input" placeholder="Type a message..." aria-label="Type a message" />
+    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Bottom navigation">
+    <a href="index.html"><i class="fas fa-home"></i><small>Home</small></a>
+    <a href="about.html"><i class="fas fa-user-md"></i><small>About</small></a>
+    <a href="services.html"><i class="fas fa-stethoscope"></i><small>Services</small></a>
+    <a href="contact.html"><i class="fas fa-phone"></i><small>Contact</small></a>
+  </nav>
+
+  <script src="assets/chat.js"></script>
+</body>
+</html>
