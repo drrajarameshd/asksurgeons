@@ -1,244 +1,144 @@
-// sw.js - AskSurgeons (multi-page friendly)
-// Version bump to force update when you change this file.
-const SW_VERSION = 'asksurgeons-v1.2025-09-06';
+/* sw-register.js
+   Lightweight service worker register + user update prompt for AskSurgeons
+   Place this file at /sw-register.js and include on every page:
+   <script src="/sw-register.js" defer></script>
+*/
 
-// Cache names
-const PRECACHE = `${SW_VERSION}-precache`;
-const RUNTIME = `${SW_VERSION}-runtime`;
-const IMAGE_CACHE = `${SW_VERSION}-images`;
-const DATA_CACHE = `${SW_VERSION}-data`;
-
-// Files to precache (app shell + important pages)
-const PRECACHE_URLS = [
-  '/',              // start_url - must be cached & controlled
-  '/index.html',
-  '/about.html',
-  '/services.html',
-  '/contact.html',
-  '/doctors.html',
-  '/manifest.json',
-  '/assets/style.css',
-  '/assets/scripts/script.js',
-  '/assets/scripts/doctors.js',
-  '/assets/scripts/chat.js',
-  '/assets/logos/logo.png',
-  '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png',
-  '/assets/photos/photo1.jpg',
-  '/assets/photos/photo2.jpg',
-  '/assets/photos/photo3.jpg',
-  '/doctors/data.json',
-  '/offline.html'
-];
-
-// Image cache limits
-const IMAGE_CACHE_MAX_ENTRIES = 60;
-const IMAGE_CACHE_MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-// Utility: trim cache to a max number of entries (FIFO)
-async function trimCache(cacheName, maxItems) {
-  try {
-    const cache = await caches.open(cacheName);
-    const keys = await cache.keys();
-    if (keys.length <= maxItems) return;
-    const removeCount = keys.length - maxItems;
-    for (let i = 0; i < removeCount; i++) {
-      await cache.delete(keys[i]);
-    }
-  } catch (e) {
-    console.warn('trimCache error', e);
+(function () {
+  if (!('serviceWorker' in navigator)) {
+    // Not supported — nothing to do
+    return;
   }
-}
 
-// Utility: remove entries older than maxAgeMs (optional)
-async function removeOldEntries(cacheName, maxAgeMs) {
-  try {
-    const cache = await caches.open(cacheName);
-    const requests = await cache.keys();
-    const now = Date.now();
-    for (const req of requests) {
-      const resp = await cache.match(req);
-      if (!resp) continue;
-      const dateHeader = resp.headers.get('date');
-      if (!dateHeader) continue;
-      const age = now - new Date(dateHeader).getTime();
-      if (age > maxAgeMs) {
-        await cache.delete(req);
-      }
-    }
-  } catch (e) {
-    // non-fatal cleanup
+  // small DOM helper to create a low-profile update banner
+  function createUpdateBanner() {
+    // Avoid duplicate banners
+    if (document.getElementById('sw-update-banner')) return null;
+
+    const banner = document.createElement('div');
+    banner.id = 'sw-update-banner';
+    banner.style.position = 'fixed';
+    banner.style.left = '12px';
+    banner.style.right = '12px';
+    banner.style.bottom = '18px';
+    banner.style.zIndex = 999999;
+    banner.style.display = 'flex';
+    banner.style.alignItems = 'center';
+    banner.style.justifyContent = 'space-between';
+    banner.style.gap = '12px';
+    banner.style.padding = '10px 14px';
+    banner.style.borderRadius = '10px';
+    banner.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)';
+    banner.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
+    banner.style.fontSize = '14px';
+    banner.style.background = '#ffffff';
+    banner.style.color = '#111';
+    banner.style.maxWidth = '720px';
+    banner.style.margin = '0 auto';
+    banner.style.left = '50%';
+    banner.style.transform = 'translateX(-50%)';
+
+    const text = document.createElement('div');
+    text.textContent = 'A new version of the app is available.';
+
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.gap = '8px';
+
+    const btnUpdate = document.createElement('button');
+    btnUpdate.type = 'button';
+    btnUpdate.textContent = 'Update';
+    btnUpdate.style.border = 'none';
+    btnUpdate.style.background = '#007BBF';
+    btnUpdate.style.color = '#fff';
+    btnUpdate.style.padding = '8px 12px';
+    btnUpdate.style.borderRadius = '8px';
+    btnUpdate.style.cursor = 'pointer';
+    btnUpdate.style.fontWeight = '600';
+
+    const btnDismiss = document.createElement('button');
+    btnDismiss.type = 'button';
+    btnDismiss.textContent = 'Dismiss';
+    btnDismiss.style.border = '1px solid #ddd';
+    btnDismiss.style.background = '#fff';
+    btnDismiss.style.color = '#333';
+    btnDismiss.style.padding = '8px 10px';
+    btnDismiss.style.borderRadius = '8px';
+    btnDismiss.style.cursor = 'pointer';
+
+    actions.appendChild(btnUpdate);
+    actions.appendChild(btnDismiss);
+    banner.appendChild(text);
+    banner.appendChild(actions);
+
+    document.body.appendChild(banner);
+
+    // Dismiss removes the banner
+    btnDismiss.addEventListener('click', () => {
+      banner.remove();
+    });
+
+    return { banner, btnUpdate, btnDismiss };
   }
-}
 
-// Create aliases in precache so requests like '/doctors' match '/doctors.html'
-async function createPrecacheAliases() {
-  try {
-    const cache = await caches.open(PRECACHE);
-    const aliasMap = [
-      { from: '/doctors', to: '/doctors.html' },
-      { from: '/doctors/', to: '/doctors.html' },
-      { from: '/about', to: '/about.html' },
-      { from: '/services', to: '/services.html' },
-      { from: '/contact', to: '/contact.html' }
-      // add more aliases if you have other "extensionless" routes
-    ];
-    for (const a of aliasMap) {
-      const resp = await cache.match(a.to);
-      if (resp) {
-        await cache.put(a.from, resp.clone());
-      }
-    }
-  } catch (e) {
-    console.warn('createPrecacheAliases failed', e);
-  }
-}
+  // Register immediately (as early as script runs)
+  let refreshing = false;
 
-// Install: precache resources (safe: logs failures)
-self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil((async () => {
-    const cache = await caches.open(PRECACHE);
-    const failed = [];
-    for (const url of PRECACHE_URLS) {
-      try {
-        // fetch fresh during install
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res || !res.ok) throw new Error(`${res ? res.status : 'no-response'}`);
-        await cache.put(url, res.clone());
-      } catch (err) {
-        failed.push({ url, err: err && err.message ? err.message : String(err) });
-        console.warn('Precache failed for', url, err);
-      }
-    }
-    // Create alias entries to support extensionless routes like /doctors
-    await createPrecacheAliases();
+  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    .then(reg => {
+      console.log('[SW] Registered with scope:', reg.scope);
 
-    if (failed.length) {
-      // We don't abort install by default to allow development; uncomment to enforce.
-      // throw new Error('Precache failed: ' + JSON.stringify(failed));
-      console.warn('Precache encountered failures:', failed);
-    }
-  })());
-});
-
-// Activate: cleanup and claim clients
-self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    clients.claim();
-    const keys = await caches.keys();
-    await Promise.all(
-      keys.filter(k => ![PRECACHE, RUNTIME, IMAGE_CACHE, DATA_CACHE].includes(k))
-          .map(k => caches.delete(k))
-    );
-    // optional: cleanup old image entries by age
-    removeOldEntries(IMAGE_CACHE, IMAGE_CACHE_MAX_AGE);
-  })());
-});
-
-// Helper: detect JSON/API requests
-function isJSONRequest(request) {
-  try {
-    const accept = request.headers.get('Accept') || '';
-    return request.url.endsWith('.json') || accept.includes('application/json') || request.destination === 'document' && request.url.endsWith('.json');
-  } catch (e) {
-    return false;
-  }
-}
-
-// Fetch handler with multi-page navigation support
-self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Handle same-origin resources with runtime strategies
-  if (url.origin === location.origin) {
-
-    // NAVIGATION - multi-page friendly
-    if (request.mode === 'navigate') {
-      event.respondWith((async () => {
-        // 1) Try exact match (covers alias keys too)
-        const exact = await caches.match(request);
-        if (exact) return exact;
-
-        // 2) Try common multi-page variants: /foo -> /foo.html and /foo/index.html
-        try {
-          const pathname = url.pathname.replace(/\/+$/, ''); // remove trailing slash
-          if (pathname && pathname !== '') {
-            const base = pathname.startsWith('/') ? pathname : `/${pathname}`;
-            const candidates = [
-              `${base}.html`,
-              `${base}/index.html`,
-              `${base}.html`.replace(/^\//, ''),
-              `${base}/index.html`.replace(/^\//, '')
-            ];
-            for (const cand of candidates) {
-              const resp = await caches.match(cand);
-              if (resp) return resp;
-            }
-          }
-        } catch (e) {
-          // ignore and continue to shell/network
-        }
-
-        // 3) Fallback to the app shell (index.html or root) as last resort
-        const shell = await caches.match('/index.html') || await caches.match('/');
-        if (shell) return shell;
-
-        // 4) Network fallback and cache if succeeds
-        try {
-          const networkResponse = await fetch(request);
-          if (networkResponse && networkResponse.ok && networkResponse.type === 'basic') {
-            const runtimeCache = await caches.open(RUNTIME);
-            runtimeCache.put(request, networkResponse.clone());
-          }
-          return networkResponse;
-        } catch (err) {
-          // 5) Final fallback: offline page
-          const offline = await caches.match('/offline.html');
-          if (offline) return offline;
-          return new Response('<h1>Offline</h1><p>Page not available offline.</p>', {
-            headers: { 'Content-Type': 'text/html' }, status: 503
+      // If there's an active waiting worker (from previous registration), prompt immediately
+      if (reg.waiting) {
+        console.log('[SW] update waiting (already installed)');
+        const ui = createUpdateBanner();
+        if (ui) {
+          ui.btnUpdate.addEventListener('click', () => {
+            // tell waiting worker to skipWaiting, then reload when it takes control
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           });
         }
-      })());
-      return;
-    }
+      }
 
-    // API / JSON -> network-first, fallback to cache, fallback to /doctors/data.json
-    if (isJSONRequest(request)) {
-      event.respondWith((async () => {
-        try {
-          const networkResponse = await fetch(request);
-          if (networkResponse && networkResponse.ok) {
-            const cache = await caches.open(DATA_CACHE);
-            cache.put(request, networkResponse.clone());
+      // Listen for updates found while this page is open
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        console.log('[SW] updatefound - new worker state:', newWorker.state);
+        newWorker.addEventListener('statechange', () => {
+          console.log('[SW] new worker statechange:', newWorker.state);
+          // When newWorker.state === 'installed' and there's a controller, it means an update is waiting
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // show update prompt
+            const ui = createUpdateBanner();
+            if (!ui) return;
+            ui.btnUpdate.addEventListener('click', () => {
+              // Post message to trigger skipWaiting in worker
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+            });
           }
-          return networkResponse;
-        } catch (err) {
-          const cached = await caches.match(request);
-          if (cached) return cached;
-          const fallback = await caches.match('/doctors/data.json');
-          if (fallback) return fallback;
-          return new Response(JSON.stringify({ error: 'offline' }), {
-            status: 503, headers: { 'Content-Type': 'application/json' }
-          });
-        }
-      })());
-      return;
-    }
+        });
+      });
+    })
+    .catch(err => console.error('[SW] Registration failed:', err));
 
-    // CSS & JS -> stale-while-revalidate
-    if (request.destination === 'style' || request.destination === 'script') {
-      event.respondWith((async () => {
-        const cache = await caches.open(RUNTIME);
-        const cachedResp = await cache.match(request);
-        const networkFetch = (async () => {
-          try {
-            const networkResp = await fetch(request);
-            if (networkResp && networkResp.ok) {
-              cache.put(request, networkResp.clone());
-            }
-            return networkResp;
-          } catch (e) {
-            return undefi
+  // When the new SW activates and takes control, reload to use new assets
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    console.log('[SW] controller changed — reloading page to activate new SW');
+    // small delay to allow the newly-activated SW to claim clients
+    setTimeout(() => {
+      try { window.location.reload(); } catch (e) { console.warn(e); }
+    }, 300);
+  });
+
+  // Optional: listen for messages from the SW (helpful for debugging)
+  navigator.serviceWorker.addEventListener('message', (evt) => {
+    // example: worker could send {type: 'LOG', message: '...'}
+    if (evt.data && evt.data.type === 'LOG') {
+      console.log('[SW message]', evt.data.message);
+    }
+  });
+
+})();
