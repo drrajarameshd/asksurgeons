@@ -89,22 +89,90 @@ main{padding:1rem}
 .pill{background:#eef7ff;color:#0b5480;border:1px solid #d5ecff;padding:.4rem .6rem;border-radius:999px;font-size:.85rem}
 
 /* -------------------- Doctors list (WhatsApp-like) -------------------- */
-.list-container{padding:0.5rem 0.75rem 6rem}
-.wa-list{list-style:none;padding:0;margin:0}
-.wa-item{
-  display:flex;align-items:center;gap:.75rem;padding:.8rem;border-radius:12px;margin-bottom:.45rem;
-  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:background .12s,transform .08s;
+.list-container {
+  padding: 0.5rem 0.75rem 6rem;
 }
-.wa-item:active{transform:translateY(1px)}
-.wa-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0}
-.wa-body{flex:1;min-width:0}
-.wa-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem}
-.wa-name{font-weight:600;color:#0b3b5e;font-size:.98rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wa-sub{font-size:.86rem;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* search bar */
-.search-bar{padding:.6rem;background:var(--background);border-bottom:1px solid #eee}
-.search-bar input{width:100%;padding:.7rem .9rem;border-radius:10px;border:1px solid #e5e5e5;font-size:.95rem}
+.wa-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.wa-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .8rem;
+  border-radius: 12px;
+  margin-bottom: .45rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: background .12s, transform .08s;
+}
+.wa-item:active { transform: translateY(1px); }
+
+.wa-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.wa-body {
+  flex: 1;
+  min-width: 0; /* important so ellipsis works */
+}
+
+.wa-top {
+  display: flex;
+  flex-direction: column;  /* stack vertically */
+  align-items: flex-start;
+  margin-bottom: .15rem;
+  gap: 2px;
+}
+
+/* Doctor's name — highlighted */
+.wa-name {
+  font-weight: 700;
+  color: #0b3b5e;
+  font-size: 1rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
+}
+
+/* Speciality below name, lighter */
+.wa-sub,
+.wa-time {
+  font-size: .85rem;
+  color: #666;
+  font-weight: 500;
+  opacity: .85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
+}
+
+/* Search bar */
+.search-bar {
+  padding: .6rem;
+  background: var(--background);
+  border-bottom: 1px solid #eee;
+}
+.search-bar input {
+  width: 100%;
+  padding: .7rem .9rem;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  font-size: .95rem;
+}
 
 /* -------------------- Bottom navigation (non-chat pages) -------------------- */
 .bottom-nav{
