@@ -55,6 +55,16 @@ body{
 .mobile-header .logo img{height:32px;width:auto}
 .mobile-header .header-actions i{font-size:1.2rem;cursor:pointer;transition:color .18s}
 .mobile-header .header-actions i:hover{color:var(--accent)}
+/* Site title inside mobile header */
+.mobile-header .site-title {
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;           /* white text */
+  letter-spacing: 0.5px; /* optional modern look */
+  white-space: nowrap;   /* prevent breaking into two lines */
+}
+
 
 /* -------------------- Carousel -------------------- */
 .carousel{
