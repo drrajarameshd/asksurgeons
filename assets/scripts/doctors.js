@@ -6,7 +6,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const LIST_EL = document.getElementById('doctors-list');     // <ul id="doctors-list" class="wa-list">
-  const SEARCH_INPUT = document.getElementById('search-input'); // <input id="search-input">
+  const SEARCH_INPUT = document.getElementById('doc_search-input'); // <input id="search-input">
   const NO_RESULTS_HTML = '<li class="wa-item" style="justify-content:center;background:transparent;box-shadow:none;color:#666;">No results found</li>';
   const searchToggle = document.getElementById("search-toggle");
   const searchBar = document.getElementById("search-bar");
