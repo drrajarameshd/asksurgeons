@@ -120,7 +120,7 @@ body{
 @media (min-width:768px){ .carousel{height:260px} }
 
 /* -------------------- Content cards -------------------- */
-main{padding:1rem}
+main{padding:1rem ; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom));}
 .card{
   background:#fff;
   padding:1.25rem;
