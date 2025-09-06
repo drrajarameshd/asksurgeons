@@ -150,24 +150,24 @@ document.addEventListener('DOMContentLoaded', () => {
   })(); // init
 });
 
- // search toggle
-  searchToggle?.addEventListener('click', () => {
-    if (searchBar.style.display === 'none') {
-      searchBar.style.display = 'block';
-      searchInput.focus();
-    } else {
-      searchBar.style.display = 'none';
-      searchInput.value = '';
-      filtered = doctors.slice();
-      renderList(filtered);
-    }
-  });
+ // // search toggle
+ //  searchToggle?.addEventListener('click', () => {
+ //    if (searchBar.style.display === 'none') {
+ //      searchBar.style.display = 'block';
+ //      searchInput.focus();
+ //    } else {
+ //      searchBar.style.display = 'none';
+ //      searchInput.value = '';
+ //      filtered = doctors.slice();
+ //      renderList(filtered);
+ //    }
+ //  });
 
-  // search input
-  searchInput?.addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
-    filtered = doctors.filter(d => (d.name + ' ' + d.speciality + ' ' + (d.department||'')).toLowerCase().includes(q));
-    renderList(filtered);
-  });
+ //  // search input
+ //  searchInput?.addEventListener('input', (e) => {
+ //    const q = e.target.value.trim().toLowerCase();
+ //    filtered = doctors.filter(d => (d.name + ' ' + d.speciality + ' ' + (d.department||'')).toLowerCase().includes(q));
+ //    renderList(filtered);
+ //  });
 
 
