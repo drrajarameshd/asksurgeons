@@ -138,6 +138,7 @@ main{padding:1rem}
 /* -------------------- Doctors list (WhatsApp-like) -------------------- */
 .list-container {
   padding: 0.5rem 0.75rem 6rem;
+  padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom));
 }
 
 .wa-list {
