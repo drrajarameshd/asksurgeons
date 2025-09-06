@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     li.dataset.index = originalIndex; // IMPORTANT: stable original index used for navigation
 
     li.innerHTML = `
-      <img class="wa-avatar" src="${escapeHtml(doctor.image || 'assets/logo.png')}" alt="${escapeHtml(doctor.name)}" onerror="this.src='assets/logo.png'">
+      <img class="wa-avatar" src="${escapeHtml(doctor.image || 'assets/logos/logo3.webp')}" alt="${escapeHtml(doctor.name)}" onerror="this.src='assets/logos/logo3.webp'">
       <div class="wa-body">
         <div class="wa-top">
           <div class="wa-name">${escapeHtml(doctor.name)}</div>
