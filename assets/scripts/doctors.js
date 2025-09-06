@@ -169,6 +169,5 @@ document.addEventListener('DOMContentLoaded', () => {
     filtered = doctors.filter(d => (d.name + ' ' + d.speciality + ' ' + (d.department||'')).toLowerCase().includes(q));
     renderList(filtered);
   });
-});
 
 
