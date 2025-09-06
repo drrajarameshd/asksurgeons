@@ -39,31 +39,52 @@ body{
 .mt8{margin-top:.8rem}
 
 /* -------------------- Mobile Header -------------------- */
-.mobile-header{
-  background:var(--primary);
-  color:#fff;
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 1rem;
-  position:sticky;
-  top:0;
-  z-index:1000;
-  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+.mobile-header {
+  background: var(--primary);
+  color: #fff;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-.mobile-header .logo img{height:32px;width:auto}
-.mobile-header .header-actions i{font-size:1.2rem;cursor:pointer;transition:color .18s}
-.mobile-header .header-actions i:hover{color:var(--accent)}
+
+/* Logo + title container */
+.mobile-header .logo {
+  display: flex;
+  align-items: center;   /* ensures vertical centering */
+  gap: 0.5rem;           /* space between logo and title */
+}
+
+.mobile-header .logo img {
+  height: 32px;
+  width: auto;
+}
+
 /* Site title inside mobile header */
 .mobile-header .site-title {
-  margin-left: 0.5rem;
   font-size: 1.1rem;
   font-weight: 600;
   color: #fff;           /* white text */
   letter-spacing: 0.5px; /* optional modern look */
   white-space: nowrap;   /* prevent breaking into two lines */
 }
+
+/* Header actions */
+.mobile-header .header-actions i {
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color .18s;
+}
+
+.mobile-header .header-actions i:hover {
+  color: var(--accent);
+}
+
 
 
 /* -------------------- Carousel -------------------- */
