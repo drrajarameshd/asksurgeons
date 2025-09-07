@@ -1,13 +1,11 @@
-
 [
   {
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.asksurgeons.app",
-      "sha256_cert_fingerprints": [
-        "A2:7C:A8:21:E4:68:0D:4A:49:0F:E0:7F:CD:86:88:87:4A:26:C2:7F:C2:CA:E6:61:40:F3:20:FA:81:1E:FA:6D"
-      ]
+      "package_name": "com.asksurgeons.app.twa",
+      "sha256_cert_fingerprints":
+        ["D2:37:12:40:B3:87:56:0B:94:B0:ED:DD:16:AA:D2:61:89:69:14:81:7E:7D:99:B8:20:2A:38:6A:63:EC:BD:F8"]
     }
   }
 ]
