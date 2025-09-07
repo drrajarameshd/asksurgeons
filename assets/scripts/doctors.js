@@ -171,26 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-//added new areas
-
-// Build initial structured bio HTML
-function buildInitialBioHtml(doc) {
-  const bioText = doc.bio ? esc(doc.bio).replace(/\n/g, "<br/>") : "";
-  let html = `<strong>Bio</strong><br/><p>${bioText}</p>`;
-
-  if (Array.isArray(doc.areas) && doc.areas.length) {
-    html += `
-      <br/>
-      <details class="areas-collapse" role="group" aria-label="Areas of Speciality">
-        <summary class="areas-summary"><strong>Areas of Speciality</strong></summary>
-        <ul class="as-areas-list">
-          ${doc.areas.map(area => `<li>${esc(area)}</li>`).join("")}
-        </ul>
-      </details>
-    `;
-  }
-  return html;
-}
 
 
 
