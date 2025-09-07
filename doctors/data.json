@@ -21,12 +21,13 @@
     "department": "Primary Care"
   },
    {
-    "name": "Dr. Nagarjuna, MS (PGI)",
-    "speciality": "E.N.T",
-    "image": "doctors/images/image4.webp",
-    "bio": "Skilled ENT specialist treating ear, nose & throat conditions with advanced care and patient-focused approach.",
-    "department": "ENT"
-  },
+  "name": "Dr.G V Nagarjuna Reddy, MS (PGI)",
+  "speciality": "E.N.T",
+  "image": "doctors/images/image4.webp",
+  "bio": "MS(PGI), Fellow Head and Neck Oncology(RCS-Eng), Fellow IFHNOS, Fellow EBEORL-HNS, Ex-SR HBCHRC (A unit of TMH Mumbai). Areas of Speciality: ENT disorder, Pediatric Airway disorder, Thyroid disorder, Parathyroid disorders, Parotid disorders, Head and Neck Benign lesions, Oral cavity Cancers, Swallowing Rehabilitation, Minimal Invasive Laser and Robotic Surgery in Head and Neck",
+  "department": "ENT, Head and Neck Oncology"
+   }
+
   {
     "name": "Dr. P. Verma, MCh",
     "speciality": "Neurosurgery",
