@@ -28,14 +28,14 @@
     "department": "ENT"
   },
   {
-    "name": "Dr. P. Verma, MCh",
+    "name": "Dr. Laxminath Sivaraju, MCh",
     "speciality": "Neurosurgery",
     "image": "doctors/images/image5.webp",
     "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
     "department": "Neurosurgery"
   },
   {
-    "name": "Dr. A. Singh, MS",
+    "name": "Dr. Siva Narasimha Reddy MS",
     "speciality": "Orthopedics & Joint Replacement",
     "image": "doctors/images/image6.webp",
     "bio": "Orthopedic surgeon focusing on joint replacements (hip, knee) and complex trauma reconstructions. Emphasis on rehab protocols and outcome tracking.",
@@ -49,7 +49,7 @@
     "department": "Cardiac Surgery"
   },
   {
-    "name": "Dr. M. Patel, DNB",
+    "name": "Dr. Vinay MS, Mch(Nims)",
     "speciality": "Urology & Kidney Surgery",
     "image": "doctors/images/image8.webp",
     "bio": "Urologist with expertise in endourology, stone disease and reconstructive urology. Provides perioperative and follow-up care.",
@@ -77,4 +77,3 @@
     "department": "Plastic Surgery"
   }
 ]
-
