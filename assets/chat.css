@@ -5,39 +5,43 @@
    Requires: variables from assets/style.css (:root).
    ======================================================================= */
 
-/* fixed chat header */
+/* Fixed header like WhatsApp */
 .chat-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: var(--header-height);
+  height: var(--header-height, 56px); /* fallback */
   display: flex;
   align-items: center;
   gap: .75rem;
   padding: .5rem 1rem;
   background: var(--primary);
   color: #fff;
-  z-index: 1000;
+  z-index: 2000; /* high so it stays on top */
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transform: none !important; /* avoid transform-related hit-test bugs */
 }
+
+/* ensure avatar/meta layout */
 .chat-header .avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; }
 .chat-header .meta { flex:1; min-width:0; }
 .chat-header .meta .name { font-weight:700; font-size:1rem; }
 .chat-header .meta .spec { font-size:.85rem; opacity:.9; }
 .chat-actions { display:flex; gap:.6rem; align-items:center; }
 
-/* chat area - pushed down to avoid overlap with fixed header */
+/* Chat area must be pushed down below the fixed header */
 .chat-area {
   box-sizing: border-box;
   position: relative;
-  height: calc(100vh - var(--header-height) - var(--composer-height) - var(--composer-bottom-gap));
-  margin-top: var(--header-height);
+  margin-top: calc(var(--header-height, 56px)); /* push content below header */
+  height: calc(100vh - var(--header-height, 56px) - var(--composer-height, 64px) - var(--composer-bottom-gap, 12px));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px calc(var(--composer-right, 0px) + 4px) 12px calc(var(--composer-left, 0px) + 4px);
+  padding: 12px calc(var(--composer-right, 12px) + 4px) 12px calc(var(--composer-left, 12px) + 4px);
   background: var(--background);
 }
+
 
 /* message bubbles */
 .msg{
