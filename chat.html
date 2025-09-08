@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Chat - Doctor</title>
   <link rel="stylesheet" href="assets/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/chat.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <meta name="theme-color" content="#007BBF" />
 </head>
 <body>
@@ -18,14 +19,15 @@
   <!-- composer -->
   <div class="composer">
     <input id="composer-input" placeholder="Type a message..." aria-label="Type a message" />
-    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+    <button id="send-btn" type="button" aria-label="Send message" title="Send">
+      <!-- Paper plane SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
   </div>
 
-  <script>
-  document.body.style.overflow = "hidden";
-  document.body.style.height = "100%";
-</script>
   <script src="assets/scripts/chat.js"></script>
-   <script src="assets/scripts/sw-register.js" defer></script>
+  <script src="assets/scripts/sw-register.js" defer></script>
 </body>
 </html>
