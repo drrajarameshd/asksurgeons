@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const WA_BASE = `https://wa.me/${ASKSURGEONS_NUMBER}?text=`;
 
   const params = new URLSearchParams(location.search);
-  const idx = parseInt(params.get("doc") || "0", 10);
+  const idx = parseInt(params.get("doc") || "0", 11);
 
   async function loadDoctors() {
     try {
