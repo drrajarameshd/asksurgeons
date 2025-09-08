@@ -340,7 +340,7 @@ main{padding:1rem ; padding-bottom: calc(60px + 12px + env(safe-area-inset-botto
 .composer input{
   flex:1 1 auto;
   min-width:0;
-  height:--composer-height
+  height:calc(var(--composer-height) - 12px);
   padding:.9rem 1rem;
   border-radius:999px;
   border:1px solid #e6e6e6;
@@ -349,13 +349,13 @@ main{padding:1rem ; padding-bottom: calc(60px + 12px + env(safe-area-inset-botto
   box-sizing:border-box;
 }
 .composer button{
-  height:--composer-height
-  padding:1.8rem;
+  height:calc(var(--composer-height) - 12px);
+  padding:0 .9rem;
   border-radius:999px;
   border:none;
   background:var(--primary);
   color:#fff;
-  font-size:1.5rem;
+  font-size:1rem;
   box-shadow:0 4px 10px rgba(0,0,0,0.12);
 }
 
