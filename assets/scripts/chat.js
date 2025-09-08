@@ -42,11 +42,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     return d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
   };
 
+  // DOM refs
   const root = document.getElementById("chat-root");
   const area = document.getElementById("chat-area");
   const input = document.getElementById("composer-input");
   const sendBtn = document.getElementById("send-btn");
 
+  // Render header (injected)
   root.innerHTML = `
     <header class="chat-header" role="banner">
       <button id="back-btn" aria-label="Back" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
@@ -56,12 +58,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="spec">${esc(doctor.speciality)}</div>
       </div>
       <div class="chat-actions">
-        <a id="call-link" href="tel:+918062182411" style="color:white"><i class="fas fa-phone"></i></a>
+        <a id="call-link" href="tel:+${ASKSURGEONS_NUMBER}" style="color:white"><i class="fas fa-phone"></i></a>
       </div>
     </header>
   `;
-  document.getElementById("back-btn").addEventListener("click", () => history.back());
+  const backBtn = document.getElementById("back-btn");
+  backBtn && backBtn.addEventListener("click", () => history.back());
 
+  // sessionStorage helpers
   function loadFromSession() {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -82,6 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // initial messages (bio)
   let messages = loadFromSession();
   if (!messages) {
     const bioHtml = `<strong>${esc(doctor.name)}</strong><br/><em>${esc(doctor.speciality)}</em><br/><br/>${esc(doctor.bio).replace(/\n/g, "<br/>")}`;
@@ -89,9 +94,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     saveToSession(messages);
   }
 
+  // create DOM node for a message
   function createMsgNode(msg) {
     const wrapper = document.createElement("div");
-    wrapper.className = `msg ${msg.type === "me" ? "me" : "system"}`;
+    wrapper.className = `msg ${msg.type === "me" ? "me" : (msg.type === "bio" ? "system bio" : msg.type === "auto_reply" ? "system auto" : "system")}`;
 
     const inner = document.createElement("div");
     inner.className = "msg-content";
@@ -107,6 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const patientText = msg.meta && msg.meta.patientMsg ? msg.meta.patientMsg : "";
         const waMessage = buildWhatsAppMessage(patientText);
         showToast("Opening WhatsApp…");
+        // open in new tab (will switch app on mobile)
         window.open(WA_BASE + encodeURIComponent(waMessage), "_blank");
       });
       wrapper.appendChild(waBtn);
@@ -122,12 +129,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     return wrapper;
   }
 
+  // render all messages into area
   function renderAll() {
+    if (!area) return;
     area.innerHTML = "";
     messages.forEach(m => area.appendChild(createMsgNode(m)));
+    // ensure scroll to bottom
     area.scrollTop = area.scrollHeight;
   }
 
+  // small toast helper
   function showToast(text = "Opening WhatsApp…") {
     let t = document.getElementById("as-toast");
     if (!t) {
@@ -160,43 +171,152 @@ document.addEventListener("DOMContentLoaded", async () => {
     return lines.join("\n");
   }
 
+  // initial render
   renderAll();
 
-  function onSend() {
-    const text = (input.value || "").trim();
-    if (!text) return;
+  // -------------------------
+  // Defensive onSend + touch-friendly handlers
+  // -------------------------
+  function onSend(e) {
+    try {
+      if (e && typeof e.preventDefault === "function") e.preventDefault();
+      if (e && typeof e.stopPropagation === "function") e.stopPropagation();
 
-    const myMsg = { type: "me", content: `<div>${esc(text)}</div>`, time: nowTime(), meta: {} };
-    messages.push(myMsg);
-    saveToSession(messages);
-    renderAll();
-    input.value = "";
+      if (!input) {
+        console.warn("composer input missing");
+        return;
+      }
 
-    const hasAuto = messages.some(m => m.type === "auto_reply");
-    if (!hasAuto) {
-      const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
-      const autoMsg = {
-        type: "auto_reply",
-        content: polite,
-        time: nowTime(),
-        meta: { patientMsg: text }
-      };
-      messages.push(autoMsg);
+      const text = (input.value || "").trim();
+      if (!text) return;
+
+      // Prevent double-tap/spam: disable button briefly
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        setTimeout(() => { try { sendBtn.disabled = false; } catch(_){} }, 300);
+      }
+
+      // append message
+      const myMsg = { type: "me", content: `<div>${esc(text)}</div>`, time: nowTime(), meta: {} };
+      messages.push(myMsg);
       saveToSession(messages);
       renderAll();
-    } else {
-      const tip = { type: "system", content: `<em>Tip:</em> To continue securely, tap the green WhatsApp button above.`, time: nowTime(), meta: {} };
-      messages.push(tip);
-      saveToSession(messages);
-      renderAll();
+
+      // clear and refocus input (prevent scroll if possible)
+      input.value = "";
+      try { input.focus({ preventScroll: true }); }
+      catch (err) { try { input.focus(); } catch(_){} }
+
+      // auto-reply logic
+      const hasAuto = messages.some(m => m.type === "auto_reply");
+      if (!hasAuto) {
+        const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
+        const autoMsg = {
+          type: "auto_reply",
+          content: polite,
+          time: nowTime(),
+          meta: { patientMsg: text }
+        };
+        messages.push(autoMsg);
+        saveToSession(messages);
+        renderAll();
+      } else {
+        const tip = { type: "system", content: `<em>Tip:</em> To continue securely, tap the green WhatsApp button above.`, time: nowTime(), meta: {} };
+        messages.push(tip);
+        saveToSession(messages);
+        renderAll();
+      }
+    } catch (err) {
+      console.error("onSend error:", err);
     }
   }
 
-  sendBtn && sendBtn.addEventListener("click", onSend);
-  input && input.addEventListener("keydown", e => { if (e.key === "Enter") onSend(); });
+  // ensure sendBtn isn't a form submitter
+  if (sendBtn) sendBtn.type = "button";
 
-  // focus input on idle
-  if ("requestIdleCallback" in window) requestIdleCallback(() => { input && input.focus && input.focus({ preventScroll: true }); }, { timeout: 700 });
-  else setTimeout(() => { input && input.focus && input.focus({ preventScroll: true }); }, 300);
+  function attachSendHandlers() {
+    if (!sendBtn) return;
+    // remove old listeners to avoid duplicates
+    sendBtn.removeEventListener("pointerdown", onSend);
+    sendBtn.removeEventListener("touchend", onSend);
+    sendBtn.removeEventListener("click", onSend);
+
+    // pointerdown fires earliest and is reliable for touch + mouse
+    try {
+      sendBtn.addEventListener("pointerdown", onSend, { passive: false });
+    } catch (e) {
+      // older browsers may throw for options
+      sendBtn.addEventListener("pointerdown", onSend);
+    }
+    // fallback for older devices
+    try {
+      sendBtn.addEventListener("touchend", onSend, { passive: false });
+    } catch (e) {
+      sendBtn.addEventListener("touchend", onSend);
+    }
+    // keep click as last resort
+    sendBtn.addEventListener("click", onSend);
+  }
+
+  function onInputKeyDown(e) {
+    if (!e) return;
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onSend(e);
+    }
+  }
+
+  // bind handlers
+  attachSendHandlers();
+  if (input) {
+    input.removeEventListener("keydown", onInputKeyDown);
+    input.addEventListener("keydown", onInputKeyDown);
+  }
+
+  // -------------------------
+  // visualViewport handling so composer stays visible when keyboard opens
+  // -------------------------
+  function onViewportResize() {
+    const composer = document.querySelector('.composer');
+    if (!composer || !area) return;
+
+    if (window.visualViewport) {
+      const vh = window.visualViewport.height;
+      const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60;
+      const composerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--composer-height')) || 60;
+      // set chat area height to visible viewport minus header and composer
+      area.style.height = `${vh - headerH - composerH}px`;
+      // translate composer up by keyboard height (if any)
+      const offset = Math.max(0, window.innerHeight - vh);
+      composer.style.transform = `translateY(-${offset}px)`;
+    } else {
+      // fallback - remove inline styles so CSS takes over
+      area.style.height = '';
+      composer.style.transform = '';
+    }
+  }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', onViewportResize);
+    window.visualViewport.addEventListener('scroll', onViewportResize);
+  }
+  window.addEventListener('resize', onViewportResize);
+  // run once now
+  onViewportResize();
+
+  // focus input on idle (keep existing behavior)
+  if ("requestIdleCallback" in window) {
+    try {
+      requestIdleCallback(() => { input && input.focus && input.focus({ preventScroll: true }); }, { timeout: 700 });
+    } catch (e) {
+      setTimeout(() => { input && input.focus && input.focus({ preventScroll: true }); }, 300);
+    }
+  } else {
+    setTimeout(() => { input && input.focus && input.focus({ preventScroll: true }); }, 300);
+  }
+
+  // debug helpers (uncomment during dev)
+  // window.addEventListener('error', ev => console.error('Runtime error', ev.error || ev.message, ev));
+  // window.addEventListener('unhandledrejection', ev => console.error('Unhandled rejection', ev.reason));
+  // document.addEventListener('pointerdown', e => console.log('pointerdown ->', e.target));
 });
-
