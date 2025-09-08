@@ -1,0 +1,161 @@
+/* =======================================================================
+   AskSurgeons — Chat styles (assets/chat.css)
+   Contains: chat header, chat-area, message bubbles, WA button, toast,
+             composer, chat-specific responsive & alignment tweaks.
+   Requires: variables from assets/style.css (:root).
+   ======================================================================= */
+
+/* fixed chat header */
+.chat-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem 1rem;
+  background: var(--primary);
+  color: #fff;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.chat-header .avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+.chat-header .meta { flex:1; min-width:0; }
+.chat-header .meta .name { font-weight:700; font-size:1rem; }
+.chat-header .meta .spec { font-size:.85rem; opacity:.9; }
+.chat-actions { display:flex; gap:.6rem; align-items:center; }
+
+/* chat area - pushed down to avoid overlap with fixed header */
+.chat-area {
+  box-sizing: border-box;
+  position: relative;
+  height: calc(100vh - var(--header-height) - var(--composer-height) - var(--composer-bottom-gap));
+  margin-top: var(--header-height);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px calc(var(--composer-right, 0px) + 4px) 12px calc(var(--composer-left, 0px) + 4px);
+  background: var(--background);
+}
+
+/* message bubbles */
+.msg{
+  display:block;
+  max-width:82%;
+  margin-bottom:12px;
+  padding:10px 12px;
+  border-radius:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.03);
+  word-wrap:break-word;
+  line-height:1.28;
+}
+.msg.system{background:#fff;border-left:4px solid var(--primary);color:#111}
+.msg.me{margin-left:auto;background:var(--primary);color:#fff;border-radius:12px 12px 6px 12px}
+.msg .time{display:block;font-size:.75rem;color:rgba(255,255,255,0.9);margin-top:6px}
+.msg.system .time{color:#666}
+
+/* Hide reply controls by default */
+.msg .reply-btn{display:none !important}
+
+/* WA connect button (auto-reply only) */
+.wa-connect-btn{
+  display:inline-flex; gap:8px; align-items:center; justify-content:center; margin-top:10px;
+  background:#25D366; color:#fff; border:none; padding:10px 12px; border-radius:999px; font-weight:600;
+  box-shadow:0 6px 12px rgba(37,211,102,0.18); cursor:pointer; font-size:.95rem;
+}
+.wa-connect-btn i{ font-size:1.05rem; }
+
+/* Toast */
+.as-toast{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:150px;
+  background:rgba(0,0,0,0.85);
+  color:#fff;
+  padding:.6rem 1rem;
+  border-radius:999px;
+  font-size:.95rem;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s,transform .18s;
+  z-index:2000;
+}
+.as-toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); pointer-events:auto; }
+
+/* -------------------- Composer (fixed) -------------------- */
+/* Keep composer styling lean; JS should update bottom during keyboard events */
+.composer{
+  position: fixed;
+  left: var(--composer-left);
+  right: var(--composer-right);
+  /* include safe-area inset for iOS */
+  bottom: calc(var(--composer-bottom-gap) + env(safe-area-inset-bottom, 0px));
+  height: var(--composer-height);
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  padding: 6px;
+  z-index: 1200;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  transition: bottom 180ms cubic-bezier(.2,.9,.2,1);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0.06);
+  transform: none !important;
+  pointer-events: auto;
+}
+
+/* composer input + button */
+.composer input{
+  flex:1 1 auto;
+  min-width:0;
+  height: calc(var(--composer-height) - 12px);
+  padding:.9rem 1rem;
+  border-radius:999px;
+  border:1px solid #e6e6e6;
+  background:#fff;
+  font-size:.95rem;
+  box-sizing:border-box;
+  outline:none;
+}
+.composer button{
+  height: calc(var(--composer-height) - 12px);
+  padding:0 .9rem;
+  border-radius:999px;
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  font-size:1.5rem;
+  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+  min-width:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+}
+
+/* Align chat content with composer left/right gaps */
+.chat-area, .chat-area .msg-content{
+  padding-left: calc(var(--composer-left) + 4px);
+  padding-right: calc(var(--composer-right) + 4px);
+  box-sizing: border-box;
+}
+
+/* tweak small screens */
+@media (max-width:360px){
+  :root{ --composer-bottom-gap:18px; --composer-height:60px; }
+  .composer input, .composer button{ height: calc(var(--composer-height) - 12px); }
+  .chat-area{ height: calc(100vh - var(--header-height) - var(--composer-height) - var(--composer-bottom-gap)); }
+  .chat-header .meta .name{ font-size:.95rem; }
+}
+
+/* Focus styles (aria) */
+.chat-area .msg:focus-visible, .wa-connect-btn:focus-visible, .composer input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:8px; }
+
+/* Optional debug helper (commented out in production)
+   document.addEventListener('pointerdown', e => console.log('pointerdown ->', e.target));
+*/
