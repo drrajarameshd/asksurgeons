@@ -1,7 +1,9 @@
 /* =======================================================================
-   AskSurgeons — Global styles (assets/style.css)
-   Contains: root variables, base reset, header, carousel, cards, lists,
-             bottom nav, doctors list, utilities, global accessibility.
+   AskSurgeons — Final consolidated CSS (updated)
+   Paste this entire file into assets/style.css (replace any earlier CSS)
+   Notes:
+   - Remove <nav class="bottom-nav"> from chat.html (no nav in chat).
+   - Composer left gap = 12px (variable: --composer-left)
    ======================================================================= */
 
 /* -------------------- Root variables -------------------- */
@@ -12,19 +14,20 @@
   --text: #333333;
   --background: #f9f9f9;
 
-  /* Composer / layout (chat.css will read these) */
-  --composer-left: 12px;
-  --composer-right: 12px;
-  --composer-height: 64px;
-  --composer-bottom-gap: 12px;
-  --header-height: 56px;
+  /* Composer / layout */
+  --composer-left: 12px;               /* left gap for composer */
+  --composer-right: 12px;              /* right gap for composer */
+  --composer-height: 64px;             /* overall composer height */
+  --composer-bottom-gap: 12px;         /* gap from viewport bottom */
+  --header-height: 56px;               /* mobile header / chat header height */
 
   /* Bottom nav / safe area */
   --safe-bottom: env(safe-area-inset-bottom);
   --bottom-nav-height: 60px;
-  --bottom-nav-vertical-gap: 12px;
+  --bottom-nav-vertical-gap: 12px; /* bottom offset of bottom-nav */
 
-  /* Page bottom space: ensure content never hides behind composer or bottom-nav */
+  /* Page bottom space: ensures content never hides behind either composer or bottom-nav */
+  /* Use max() so the larger of composer area or bottom-nav area wins */
   --page-bottom-space: calc(
     max(
       calc(var(--composer-height) + var(--composer-bottom-gap)),
@@ -42,9 +45,9 @@ body{
   color:var(--text);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  padding-bottom: var(--page-bottom-space); /* reserve bottom space for composer / nav */
+  /* single authoritative body padding to reserve space for composer OR bottom-nav + safe-area */
+  padding-bottom: var(--page-bottom-space);
   -webkit-touch-callout:none;
-  -webkit-user-select: none;
 }
 
 /* Small utility */
@@ -65,11 +68,39 @@ body{
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-.mobile-header .logo { display: flex; align-items: center; gap: .5rem; }
-.mobile-header .logo img { height: 32px; width: auto; }
-.mobile-header .site-title { font-size:1.1rem; font-weight:600; color:#fff; letter-spacing:.5px; white-space:nowrap; }
-.mobile-header .header-actions i { font-size:1.2rem; cursor:pointer; transition:color .18s; }
-.mobile-header .header-actions i:hover { color:var(--accent); }
+/* Logo + title container */
+.mobile-header .logo {
+  display: flex;
+  align-items: center;   /* ensures vertical centering */
+  gap: 0.5rem;           /* space between logo and title */
+}
+
+.mobile-header .logo img {
+  height: 32px;
+  width: auto;
+}
+
+/* Site title inside mobile header */
+.mobile-header .site-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;           /* white text */
+  letter-spacing: 0.5px; /* optional modern look */
+  white-space: nowrap;   /* prevent breaking into two lines */
+}
+
+/* Header actions */
+.mobile-header .header-actions i {
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color .18s;
+}
+
+.mobile-header .header-actions i:hover {
+  color: var(--accent);
+}
+
+
 
 /* -------------------- Carousel -------------------- */
 .carousel{
@@ -89,7 +120,7 @@ body{
 @media (min-width:768px){ .carousel{height:260px} }
 
 /* -------------------- Content cards -------------------- */
-main{padding:1rem; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom));}
+main{padding:1rem ; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom));}
 .card{
   background:#fff;
   padding:1.25rem;
@@ -97,7 +128,8 @@ main{padding:1rem; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom
   border-radius:12px;
   box-shadow:0 1px 6px rgba(0,0,0,0.04);
 }
-.card h2,.card h3{color:var(--primary);margin-bottom:.6rem}
+.card h2,.card h3{color:var(--primary);margin-bottom:.6rem} 
+
 
 /* Pills */
 .pill-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
@@ -109,7 +141,11 @@ main{padding:1rem; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom
   padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom));
 }
 
-.wa-list { list-style: none; padding: 0; margin: 0; }
+.wa-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
 .wa-item {
   display: flex;
@@ -124,22 +160,67 @@ main{padding:1rem; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom
 }
 .wa-item:active { transform: translateY(1px); }
 
-.wa-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-.wa-body { flex: 1; min-width: 0; }
-.wa-top { display:flex; flex-direction:column; align-items:flex-start; margin-bottom:.15rem; gap:2px; }
-
-.wa-name {
-  font-weight:700; color:#0b3b5e; font-size:1rem; line-height:1.2;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:100%; display:block;
+.wa-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
-.wa-sub, .wa-time {
-  font-size:.85rem; color:#666; font-weight:500; opacity:.85;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:100%; display:block;
+
+.wa-body {
+  flex: 1;
+  min-width: 0; /* important so ellipsis works */
+}
+
+.wa-top {
+  display: flex;
+  flex-direction: column;  /* stack vertically */
+  align-items: flex-start;
+  margin-bottom: .15rem;
+  gap: 2px;
+}
+
+/* Doctor's name — highlighted */
+.wa-name {
+  font-weight: 700;
+  color: #0b3b5e;
+  font-size: 1rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
+}
+
+/* Speciality below name, lighter */
+.wa-sub,
+.wa-time {
+  font-size: .85rem;
+  color: #666;
+  font-weight: 500;
+  opacity: .85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
 }
 
 /* Search bar */
-.search-bar { padding:.6rem; background:var(--background); border-bottom:1px solid #eee; }
-.search-bar input { width:100%; padding:.7rem .9rem; border-radius:10px; border:1px solid #e5e5e5; font-size:.95rem; }
+.search-bar {
+  padding: .6rem;
+  background: var(--background);
+  border-bottom: 1px solid #eee;
+}
+.search-bar input {
+  width: 100%;
+  padding: .7rem .9rem;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  font-size: .95rem;
+}
 
 /* -------------------- Bottom navigation (non-chat pages) -------------------- */
 .bottom-nav{
@@ -166,10 +247,132 @@ main{padding:1rem; padding-bottom: calc(60px + 12px + env(safe-area-inset-bottom
 .bottom-nav a.active{color:var(--primary);font-weight:600}
 .bottom-nav a:active{transform:translateY(1px)}
 
+/* If you remove bottom-nav from chat.html, chat is unaffected. */
+
+/* -------------------- Chat styles (chat page only) -------------------- */
+/* This section assumes you will remove the <nav class="bottom-nav"> from chat.html
+   and that chat.html contains: #chat-root, #chat-area, .composer
+*/
+
+.chat-header{
+  position:sticky;
+  top:0;
+  height:var(--header-height);
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  padding:.5rem 1rem;
+  background:var(--primary);
+  color:#fff;
+  z-index:1000;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+.chat-header .avatar{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.chat-header .meta{flex:1;min-width:0}
+.chat-header .meta .name{font-weight:700;font-size:1rem}
+.chat-header .meta .spec{font-size:.85rem;opacity:.9}
+.chat-actions{display:flex;gap:.6rem;align-items:center}
+
+/* chat-area height is viewport minus header minus composer; prevents underscrolling */
+.chat-area{
+  box-sizing:border-box;
+  position:relative;
+  height:calc(100vh - var(--header-height) - var(--composer-height) - var(--composer-bottom-gap));
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:12px calc(var(--composer-right) + 4px) 12px calc(var(--composer-left) + 4px);
+  background:var(--background);
+}
+
+/* message bubbles */
+.msg{
+  display:block;
+  max-width:82%;
+  margin-bottom:12px;
+  padding:10px 12px;
+  border-radius:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.03);
+  word-wrap:break-word;
+  line-height:1.28;
+}
+.msg.system{background:#fff;border-left:4px solid var(--primary);color:#111}
+.msg.me{margin-left:auto;background:var(--primary);color:#fff;border-radius:12px 12px 6px 12px}
+.msg .time{display:block;font-size:.75rem;color:rgba(255,255,255,0.9);margin-top:6px}
+.msg.system .time{color:#666}
+
+/* Keep regular messages free of reply buttons */
+.msg .reply-btn{display:none !important}
+
+/* WA connect button (auto-reply only) */
+.wa-connect-btn{
+  display:inline-flex;gap:8px;align-items:center;justify-content:center;margin-top:10px;
+  background:#25D366;color:#fff;border:none;padding:10px 12px;border-radius:999px;font-weight:600;
+  box-shadow:0 6px 12px rgba(37,211,102,0.18);cursor:pointer;font-size:.95rem;
+}
+.wa-connect-btn i{font-size:1.05rem}
+
+/* Toast */
+.as-toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:150px;background:rgba(0,0,0,0.85);
+  color:#fff;padding:.6rem 1rem;border-radius:999px;font-size:.95rem;opacity:0;pointer-events:none;
+  transition:opacity .18s,transform .18s;z-index:2000;
+}
+.as-toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);pointer-events:auto}
+
+/* -------------------- Composer (fixed, left gap = 12px) -------------------- */
+.composer{
+  position:fixed;
+  left:var(--composer-left);          /* left gap here (12px) */
+  right:var(--composer-right);
+  bottom:var(--composer-bottom-gap);
+  height:var(--composer-height);
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+  padding:6px;
+  z-index:1200;
+  box-sizing:border-box;
+  background:transparent;
+  transition:bottom 180ms cubic-bezier(.2,.9,.2,1),transform 120ms ease;
+}
+
+/* composer input + button */
+.composer input{
+  flex:1 1 auto;
+  min-width:0;
+  height:calc(var(--composer-height) - 12px);
+  padding:.9rem 1rem;
+  border-radius:999px;
+  border:1px solid #e6e6e6;
+  background:#fff;
+  font-size:.95rem;
+  box-sizing:border-box;
+}
+.composer button{
+  height:calc(var(--composer-height) - 12px);
+  padding:0 .9rem;
+  border-radius:999px;
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  font-size:1rem;
+  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* tweak for very small screens */
+@media (max-width:360px){
+  :root{ --composer-bottom-gap:18px; --composer-height:60px }
+  .composer input, .composer button{ height:calc(var(--composer-height) - 12px) }
+  .chat-area{ height:calc(100vh - var(--header-height) - var(--composer-height) - var(--composer-bottom-gap)) }
+}
+
+/* Align chat content with composer left/right gaps */
+.chat-area, .chat-area .msg-content{ padding-left:calc(var(--composer-left) + 4px); padding-right:calc(var(--composer-right) + 4px); box-sizing:border-box }
+
 /* -------------------- Small screens adjustments -------------------- */
 @media (max-width:360px){
   .wa-avatar{width:44px;height:44px}
-  .mobile-header .logo img{height:28px}
+  .chat-header .meta .name{font-size:.95rem}
 }
 
 /* -------------------- Accessibility -------------------- */
@@ -183,3 +386,4 @@ button{ cursor:pointer }
 .social-links{display:flex;justify-content:space-around;margin-top:10px}
 .social-links a{font-size:1.6rem;color:var(--primary);transition:transform .18s,color .18s}
 .social-links a:hover{transform:scale(1.12);color:var(--primary-dark)}
+
