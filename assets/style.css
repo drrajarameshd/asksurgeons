@@ -20,6 +20,8 @@
   --composer-height: 64px;             /* overall composer height */
   --composer-bottom-gap: 12px;         /* gap from viewport bottom */
   --header-height: 56px;               /* mobile header / chat header height */
+  --send-bg: #007bbf;
+  --send-hover: #006aa0;
 
   /* Bottom nav / safe area */
   --safe-bottom: env(safe-area-inset-bottom);
@@ -348,16 +350,69 @@ main{padding:1rem ; padding-bottom: calc(60px + 12px + env(safe-area-inset-botto
   font-size:.95rem;
   box-sizing:border-box;
 }
+/* ------ keep your existing .composer and .composer input as-is ------ */
+/* (no changes needed to layout / left gap etc.) */
+
+/* Updated composer button styles (drop this in place of your .composer button rule) */
 .composer button{
-  height:calc(var(--composer-height) - 12px);
-  padding:0 .9rem;
-  border-radius:999px;
-  border:none;
-  background:var(--primary);
-  color:#fff;
-  font-size:1rem;
-  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+  height: calc(var(--composer-height) - 12px);
+  padding: 0 .9rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);     /* keeps your primary color */
+  color: #fff;                    /* makes SVG with fill="currentColor" white */
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  cursor: pointer;
+  transition: transform .06s ease, background-color .12s ease, box-shadow .12s ease;
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* Make sure inline SVG or <img> fits neatly and doesn't capture pointer events */
+.composer button svg,
+.composer button img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  pointer-events: none;   /* let the button receive clicks */
+}
+
+/* Hover / active states */
+.composer button:hover { background-color: color-mix(in srgb, var(--primary) 85%, #000 15%); transform: translateY(-1px); }
+.composer button:active { transform: translateY(0); }
+
+/* Focus visible for keyboard accessibility */
+.composer button:focus-visible {
+  outline: 3px solid rgba(0,123,191,0.18);
+  outline-offset: 3px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* Disabled state */
+.composer button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Optional: small "sending" state if chat.js toggles .sending on the button */
+.composer button.sending svg {
+  animation: plane-spin 0.9s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes plane-spin { to { transform: rotate(360deg); } }
+
+/* Ensure input and button stay vertically aligned on very small screens */
+@media (max-width:420px) {
+  .composer { gap: .4rem; padding:6px; }
+  .composer button { padding: 0 .7rem; }
+}
+
 
 /* tweak for very small screens */
 @media (max-width:360px){
