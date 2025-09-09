@@ -1,202 +1,201 @@
-// assets/chat.js
-// Final chat logic (sessionStorage, single auto-reply with WA connect button).
-// Behavior:
-// - Session-only persistence (cleared when app/tab closed).
-// - Doctor bio shown initially (no WA button).
-// - On first patient message, a polite auto-reply with a single green WA button is added (persisted for session).
-// - Composer adds local messages; WA opens only when user taps the green button.
-// - Call icon always dials AskSurgeons helpline.
+/* chat.js
+   Robust send-handler for Chrome + Android WebView / TWA
+   - safe event binding (click/pointer/touch)
+   - inline onclick fallback via window.onSendFallback
+   - visualViewport keyboard reposition helper
+   - debug logs + global error hooks
+   - minimal message rendering + optional send-to-server stub
+*/
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const ASKSURGEONS_NUMBER = "918062182411";
-  const WA_BASE = `https://wa.me/${ASKSURGEONS_NUMBER}?text=`;
+(function () {
+  "use strict";
 
-  const params = new URLSearchParams(location.search);
-  const idx = parseInt(params.get("doc") || "0", 10);
-
-  async function loadDoctors() {
+  // ---------- Utility: safeCall ----------
+  function safeCall(fn) {
     try {
-      const res = await fetch("doctors/data.json", { cache: "no-store" });
-      return await res.json();
+      return fn && fn();
     } catch (err) {
-      console.error("Could not load doctors/data.json", err);
-      return [];
+      console.error("safeCall caught:", err, err && err.stack);
     }
   }
 
-  const doctors = await loadDoctors();
-  const doctor = doctors[idx] || doctors[0] || {
-    name: "Doctor",
-    speciality: "",
-    image: "assets/logo2.png",
-    bio: "No details available."
-  };
+  // ---------- Elements ----------
+  let inputEl = null;
+  let sendBtn = null;
+  let messagesEl = null;
 
-  const STORAGE_KEY = `as_chat_doc_${idx}`;
+  // ---------- Minimal message renderer ----------
+  function appendLocalMessage(text) {
+    if (!messagesEl) return;
+    const msg = document.createElement("div");
+    msg.className = "message message--local";
+    msg.textContent = text;
+    // simple timestamp
+    const ts = document.createElement("div");
+    ts.className = "message__time";
+    ts.textContent = new Date().toLocaleTimeString();
+    msg.appendChild(ts);
+    messagesEl.appendChild(msg);
+    // scroll to bottom
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
 
-  const esc = s => String(s).replace(/[&<>"']/g, c =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-  );
-  const nowTime = () => {
-    const d = new Date();
-    return d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
-  };
+  // ---------- Optional: send to server (replace URL and payload) ----------
+  async function sendMessageToServer(text) {
+    // Example: uncomment and adapt if you have an API endpoint
+    // return fetch('/api/send', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ message: text })
+    // }).then(r => r.json());
 
-  const root = document.getElementById("chat-root");
-  const area = document.getElementById("chat-area");
-  const input = document.getElementById("composer-input");
-  const sendBtn = document.getElementById("send-btn");
+    // Simulated network latency for demo/testing
+    return new Promise((res) => setTimeout(() => res({ ok: true }), 250));
+  }
 
-  root.innerHTML = `
-    <header class="chat-header" role="banner">
-      <button id="back-btn" aria-label="Back" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
-      <img class="avatar" src="${esc(doctor.image)}" alt="${esc(doctor.name)}" onerror="this.src='assets/logos/logo.png'">
-      <div class="meta">
-        <div class="name">${esc(doctor.name)}</div>
-        <div class="spec">${esc(doctor.speciality)}</div>
-      </div>
-      <div class="chat-actions">
-        <a id="call-link" href="tel:+918062182411" style="color:white"><i class="fas fa-phone"></i></a>
-      </div>
-    </header>
-  `;
-  document.getElementById("back-btn").addEventListener("click", () => history.back());
+  // ---------- Actual onSend logic ----------
+  async function onSend(e) {
+    // Basic guard + read input
+    const text = inputEl && inputEl.value && inputEl.value.trim();
+    if (!text) {
+      // optionally add a small vibration on Android when empty (uncomment)
+      // if (navigator.vibrate) navigator.vibrate(20);
+      return;
+    }
 
-  function loadFromSession() {
+    // render locally immediately
+    appendLocalMessage(text);
+
+    // clear composer and keep focus
+    inputEl.value = "";
+    try { inputEl.focus(); } catch (e) {}
+
+    // send to server (safe)
     try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return null;
-      return parsed;
-    } catch (e) {
-      console.warn("Failed to parse session messages", e);
-      return null;
+      const res = await sendMessageToServer(text);
+      if (!res || !res.ok) {
+        console.warn("[chat] server reported failure:", res);
+        // handle retry / UI update if you want
+      }
+    } catch (err) {
+      console.error("[chat] sendMessageToServer error:", err);
     }
   }
-  function saveToSession(messages) {
+
+  // ---------- Robust wrapper + exposure for inline onclick ----------
+  let _sendingNow = false;
+  async function safeOnSend(e) {
+    if (e && typeof e.preventDefault === "function") {
+      try { e.preventDefault(); } catch (_) {}
+    }
+    if (_sendingNow) return;
+    _sendingNow = true;
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch (e) {
-      console.warn("Failed to save session messages", e);
+      console.log("[chat] safeOnSend triggered", e && e.type);
+      await safeCall(() => onSend(e));
+    } finally {
+      setTimeout(() => { _sendingNow = false; }, 120);
     }
   }
+  // inline fallback used by <button onclick="(window.onSendFallback && window.onSendFallback())">
+  window.onSendFallback = safeOnSend;
 
-  let messages = loadFromSession();
-  if (!messages) {
-    const bioHtml = `<strong>${esc(doctor.name)}</strong><br/><em>${esc(doctor.speciality)}</em><br/><br/>${esc(doctor.bio).replace(/\n/g, "<br/>")}`;
-    messages = [{ type: "bio", content: bioHtml, time: nowTime(), meta: {} }];
-    saveToSession(messages);
-  }
+  // ---------- DOM ready init ----------
+  function init() {
+    console.log("[chat.js] init — userAgent:", navigator.userAgent);
 
-  function createMsgNode(msg) {
-    const wrapper = document.createElement("div");
-    wrapper.className = `msg ${msg.type === "me" ? "me" : "system"}`;
+    inputEl = document.getElementById("composer-input") || document.querySelector(".composer input");
+    sendBtn = document.getElementById("send-btn") || document.querySelector(".composer button");
+    messagesEl = document.getElementById("messages") || document.querySelector(".messages");
 
-    const inner = document.createElement("div");
-    inner.className = "msg-content";
-    inner.innerHTML = msg.content;
-    wrapper.appendChild(inner);
+    if (!inputEl || !sendBtn || !messagesEl) {
+      console.warn("[chat.js] Missing core elements. inputEl:", !!inputEl, "sendBtn:", !!sendBtn, "messagesEl:", !!messagesEl);
+    }
 
-    if (msg.type === "auto_reply") {
-      const waBtn = document.createElement("button");
-      waBtn.className = "wa-connect-btn";
-      waBtn.type = "button";
-      waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Connect via WhatsApp';
-      waBtn.addEventListener("click", () => {
-        const patientText = msg.meta && msg.meta.patientMsg ? msg.meta.patientMsg : "";
-        const waMessage = buildWhatsAppMessage(patientText);
-        showToast("Opening WhatsApp…");
-        window.open(WA_BASE + encodeURIComponent(waMessage), "_blank");
+    // Attach multiple event types for better WebView compatibility
+    if (sendBtn) {
+      // Defensive removal if old listeners exist (safe)
+      try { sendBtn.removeEventListener("click", onSend); } catch (_) {}
+
+      sendBtn.addEventListener("click", safeOnSend, { passive: false });
+      sendBtn.addEventListener("pointerup", safeOnSend, { passive: true });
+      sendBtn.addEventListener("touchend", safeOnSend, { passive: true });
+
+      // Prevent ghost click on touchstart (some OEM browsers)
+      sendBtn.addEventListener("touchstart", function (ev) {
+        try { ev.preventDefault && ev.preventDefault(); } catch (_) {}
+      }, { passive: false });
+    }
+
+    if (inputEl) {
+      inputEl.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          safeOnSend(ev);
+        }
       });
-      wrapper.appendChild(waBtn);
     }
 
-    if (msg.type === "me") {
-      const t = document.createElement("span");
-      t.className = "time";
-      t.textContent = msg.time || nowTime();
-      inner.appendChild(t);
+    // visualViewport handling: reposition composer when keyboard opens (Android WebView fixes)
+    const composerEl = document.querySelector(".composer");
+    if (window.visualViewport && composerEl) {
+      const baseBottom = parseInt(window.getComputedStyle(composerEl).bottom || "12", 10) || 12;
+      window.visualViewport.addEventListener("resize", () => {
+        try {
+          const cv = window.visualViewport;
+          const kbOverlap = Math.max(0, window.innerHeight - cv.height - cv.offsetTop);
+          composerEl.style.bottom = `${Math.max(baseBottom, kbOverlap + baseBottom)}px`;
+        } catch (err) {
+          console.error("[chat] visualViewport resize err:", err);
+        }
+      });
     }
 
-    return wrapper;
+    // helpful debug outlines — remove on production
+    (function addDebugOutlines() {
+      try {
+        const styleId = "chat-debug-outlines";
+        if (!document.getElementById(styleId)) {
+          const s = document.createElement("style");
+          s.id = styleId;
+          s.textContent = `
+            /* debug outlines — remove when done */
+            .composer { outline: 1px dashed rgba(0,0,0,0.06) !important; }
+            #send-btn, .composer button { outline: 2px dashed rgba(255,0,0,0.45) !important; }
+          `;
+          document.head.appendChild(s);
+        }
+      } catch (e) { /* ignore */ }
+    })();
+
+    // initial focus where appropriate
+    try { inputEl && inputEl.focus(); } catch (e) {}
+
+    console.log("[chat.js] ready");
   }
 
-  function renderAll() {
-    area.innerHTML = "";
-    messages.forEach(m => area.appendChild(createMsgNode(m)));
-    area.scrollTop = area.scrollHeight;
+  // ---------- Global error / promise hooks to avoid silent failures in WebView ----------
+  window.addEventListener("error", function (ev) {
+    console.error("[window.error] message:", ev.message, "source:", ev.filename, "line:", ev.lineno, ev.error && ev.error.stack);
+  });
+  window.addEventListener("unhandledrejection", function (ev) {
+    console.error("[unhandledrejection] reason:", ev.reason);
+  });
+
+  // ---------- Wait for DOMContentLoaded but init early if already loaded ----------
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    // already ready
+    setTimeout(init, 0);
   }
 
-  function showToast(text = "Opening WhatsApp…") {
-    let t = document.getElementById("as-toast");
-    if (!t) {
-      t = document.createElement("div");
-      t.id = "as-toast";
-      t.className = "as-toast";
-      document.body.appendChild(t);
-    }
-    t.textContent = text;
-    t.classList.add("show");
-    clearTimeout(t._hideTimer);
-    t._hideTimer = setTimeout(() => t.classList.remove("show"), 2200);
-  }
+  // ---------- Expose some helpers for debugging in runtime console ----------
+  window.__chat_debug = {
+    appendLocalMessage,
+    onSend: safeOnSend,
+    rawOnSend: onSend,
+    elements: () => ({ inputEl, sendBtn, messagesEl })
+  };
 
-  function buildWhatsAppMessage(patientText = "") {
-    const lines = [];
-    const plainDocName = doctor.name.replace(/^Dr\.\s*/i, "").trim();
-    lines.push(`Hi Dr. ${plainDocName},`);
-    lines.push("");
-    if (patientText && patientText.length) {
-      const truncated = patientText.length > 800 ? patientText.slice(0, 800) + "..." : patientText;
-      lines.push(`My query: ${truncated}`);
-    } else {
-      lines.push(`I would like to discuss my case with you.`);
-    }
-    lines.push("");
-    lines.push(`Doctor specialty: ${doctor.speciality}`);
-    lines.push("");
-    lines.push(`— Sent via AskSurgeons`);
-    return lines.join("\n");
-  }
-
-  renderAll();
-
-  function onSend() {
-    const text = (input.value || "").trim();
-    if (!text) return;
-
-    const myMsg = { type: "me", content: `<div>${esc(text)}</div>`, time: nowTime(), meta: {} };
-    messages.push(myMsg);
-    saveToSession(messages);
-    renderAll();
-    input.value = "";
-
-    const hasAuto = messages.some(m => m.type === "auto_reply");
-    if (!hasAuto) {
-      const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
-      const autoMsg = {
-        type: "auto_reply",
-        content: polite,
-        time: nowTime(),
-        meta: { patientMsg: text }
-      };
-      messages.push(autoMsg);
-      saveToSession(messages);
-      renderAll();
-    } else {
-      const tip = { type: "system", content: `<em>Tip:</em> To continue securely, tap the green WhatsApp button above.`, time: nowTime(), meta: {} };
-      messages.push(tip);
-      saveToSession(messages);
-      renderAll();
-    }
-  }
-
-  sendBtn && sendBtn.addEventListener("click", onSend);
-  input && input.addEventListener("keydown", e => { if (e.key === "Enter") onSend(); });
-
-  // focus input on idle
-  if ("requestIdleCallback" in window) requestIdleCallback(() => { input && input.focus && input.focus({ preventScroll: true }); }, { timeout: 700 });
-  else setTimeout(() => { input && input.focus && input.focus({ preventScroll: true }); }, 300);
-});
-
+})();
