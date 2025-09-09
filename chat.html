@@ -19,10 +19,15 @@
   <div class="chat-area" id="chat-area"></div>
 
   <!-- composer -->
-  <div class="composer">
-    <input id="composer-input" placeholder="Type a message..." aria-label="Type a message" />
-    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
-  </div>
+<div class="composer">
+  <input id="composer-input" placeholder="Type a message..." aria-label="Type a message" />
+  <!-- add type="button" and inline onclick fallback -->
+  <button id="send-btn" type="button" onclick="(window.onSendFallback && window.onSendFallback())">
+    <i class="fas fa-paper-plane"></i>
+  </button>
+  
+</div>
+
   <script src="assets/scripts/chat.js"></script>
    <script src="assets/scripts/sw-register.js" defer></script>
 </body>
