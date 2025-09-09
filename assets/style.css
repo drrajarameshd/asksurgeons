@@ -100,7 +100,10 @@ body{
   color: var(--accent);
 }
 
-.mobile-header .header-actions .fa-whatsapp {
+.mobile-header .whatsApp .fa-whatsapp {
+  display: flex;
+  align-items: center;   /* ensures vertical centering */
+  gap: 0.5rem; 
   color: #ffffff !important;
   /* if icon uses stroke/fill variants (SVG), also add these */
   fill: #ffffff !important;
