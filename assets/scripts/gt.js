@@ -8,3 +8,5 @@
 
   gtag('config', 'AW-17523822825');
 </script>
+
+<!-- ad tag : AW-17523822825 -->
