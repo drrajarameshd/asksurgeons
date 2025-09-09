@@ -172,10 +172,44 @@ main{padding:1rem ; padding-bottom: calc(60px + 12px + env(safe-area-inset-botto
 }
 .card h2,.card h3{color:var(--primary);margin-bottom:.6rem} 
 
-
 /* Pills */
-.pill-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
-.pill{background:#eef7ff;color:#0b5480;border:1px solid #d5ecff;padding:.4rem .6rem;border-radius:999px;font-size:.85rem}
+
+.pill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: .6rem;
+}
+
+.pill {
+  background: #eef7ff;
+  color: #0b5480;
+  border: 1px solid #d5ecff;
+  padding: .4rem .6rem;
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none !important; /* removes underline for links */
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+/* Hover / focus effect with pop */
+.pill:hover,
+.pill:focus {
+  background: #e3f2ff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
+  transform: translateY(-2px) scale(1.05); /* lift + pop */
+  text-decoration: none;
+}
+
+/* Active (tap/click) effect */
+.pill:active {
+  transform: translateY(0) scale(0.98); /* press-down */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
 
 /* -------------------- Doctors list (WhatsApp-like) -------------------- */
 .list-container {
