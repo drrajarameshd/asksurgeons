@@ -100,15 +100,48 @@ body{
   color: var(--accent);
 }
 
-.mobile-header .whatsApp {
-  display: flex;
-  align-items: center;   /* ensures vertical centering */
-  gap: 0.5rem; 
-  color: #ffffff !important;
-  /* if icon uses stroke/fill variants (SVG), also add these */
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
+/*---------whatsapp Header icon *---------------/
+
+/* Standalone WhatsApp icon/link class (independent of header-actions) */
+.whatsapp-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;                 /* tappable area — adjust if you want larger */
+  height: 40px;
+  padding: 4px;
+  border-radius: 8px;
+  background: transparent;     /* use a background if you want a circle/green bg */
+  color: #ffffff !important;   /* force white icon even if other link colors apply */
+  text-decoration: none;       /* remove underline */
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
+
+/* ensure icon inherits the link color and overrides svg/font overrides */
+.whatsapp-icon-link .fa-whatsapp,
+.whatsapp-icon-link .fa-whatsapp * {
+  color: inherit !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  font-size: 20px;             /* icon size — change if needed */
+  line-height: 1;
+}
+
+/* keep hover/active/visited also white (defensive against CSS specificity) */
+.whatsapp-icon-link:hover,
+.whatsapp-icon-link:active,
+.whatsapp-icon-link:visited {
+  color: #ffffff !important;
+}
+
+/* Optional — visible focus ring for keyboard users */
+.whatsapp-icon-link:focus {
+  outline: 3px solid rgba(255,255,255,0.18);
+  outline-offset: 2px;
+}
+
+
 
 
 /* -------------------- Carousel -------------------- */
