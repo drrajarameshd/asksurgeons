@@ -100,7 +100,7 @@ body{
   color: var(--accent);
 }
 
-.mobile-header .whatsApp .fa-whatsapp {
+.mobile-header .whatsApp {
   display: flex;
   align-items: center;   /* ensures vertical centering */
   gap: 0.5rem; 
