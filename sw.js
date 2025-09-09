@@ -1,144 +1,159 @@
-/* sw-register.js
-   Lightweight service worker register + user update prompt for AskSurgeons
-   Place this file at /sw-register.js and include on every page:
-   <script src="/sw-register.js" defer></script>
-*/
+// /sw.js - Safe Service Worker for AskSurgeons
+// - Precaches core assets
+// - Bypasses common analytics/CDN hosts so external scripts are fetched from network
+// - Navigation fallback only for navigations (no HTML fallback for scripts/fonts)
+// - Supports SKIP_WAITING via message (works with sw-register.js)
 
-(function () {
-  if (!('serviceWorker' in navigator)) {
-    // Not supported — nothing to do
+const CACHE_VERSION = 'v1';
+const CACHE_NAME = `asksurgeons-${CACHE_VERSION}`;
+
+const PRECACHE_URLS = [
+  '/.well-known/assetlinks.json',
+  '/index.html',
+  '/chat.html',
+  '/about.html',
+  '/contact.html',
+  '/disclaimer.html',
+  '/doctors.html',
+  '/doctors/data.json',
+  '/offline.html',
+  '/manifest.json',
+  '/assets/style.css',
+  '/assets/scripts/chat.js',
+  '/assets/scripts/doctors.js',
+  '/assets/scripts/script.js',
+  '/assets/scripts/sw-register.js',
+  '/assets/icons/favicon.png',
+  '/assets/icons/icon-192.png',
+  '/assets/icons/icon-512.png',
+  '/assets/logos/logo.png',
+  '/assets/logos/logo2.png',
+  '/assets/logos/logo3.webp',
+  '/assets/logos/logow.webp',
+  // add other app-shell assets you consider essential
+];
+
+// Hosts we will never intercept/cache — always go to network
+const EXTERNAL_HOSTS = [
+  'googletagmanager.com',
+  'google-analytics.com',
+  'www.google-analytics.com',
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'cdnjs.cloudflare.com',
+  'cdn.jsdelivr.net'
+];
+
+/* ---------- Install: pre-cache app shell ---------- */
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE_URLS))
+      .catch(err => {
+        // Log and allow install to finish — worker will still activate, but cache may be partial
+        console.warn('[SW] precache failed:', err);
+      })
+  );
+});
+
+/* ---------- Activate: cleanup old caches ---------- */
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+/* ---------- Utility to detect external/analytics hosts ---------- */
+function isExternalRequest(url) {
+  try {
+    if (url.origin !== self.location.origin) return true;
+    const host = url.hostname || '';
+    return EXTERNAL_HOSTS.some(h => host.includes(h));
+  } catch (e) {
+    return true;
+  }
+}
+
+/* ---------- Fetch handler ---------- */
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+
+  // Ignore non-GET requests to avoid cache issues
+  if (req.method !== 'GET') {
     return;
   }
 
-  // small DOM helper to create a low-profile update banner
-  function createUpdateBanner() {
-    // Avoid duplicate banners
-    if (document.getElementById('sw-update-banner')) return null;
-
-    const banner = document.createElement('div');
-    banner.id = 'sw-update-banner';
-    banner.style.position = 'fixed';
-    banner.style.left = '12px';
-    banner.style.right = '12px';
-    banner.style.bottom = '18px';
-    banner.style.zIndex = 999999;
-    banner.style.display = 'flex';
-    banner.style.alignItems = 'center';
-    banner.style.justifyContent = 'space-between';
-    banner.style.gap = '12px';
-    banner.style.padding = '10px 14px';
-    banner.style.borderRadius = '10px';
-    banner.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)';
-    banner.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
-    banner.style.fontSize = '14px';
-    banner.style.background = '#ffffff';
-    banner.style.color = '#111';
-    banner.style.maxWidth = '720px';
-    banner.style.margin = '0 auto';
-    banner.style.left = '50%';
-    banner.style.transform = 'translateX(-50%)';
-
-    const text = document.createElement('div');
-    text.textContent = 'A new version of the app is available.';
-
-    const actions = document.createElement('div');
-    actions.style.display = 'flex';
-    actions.style.gap = '8px';
-
-    const btnUpdate = document.createElement('button');
-    btnUpdate.type = 'button';
-    btnUpdate.textContent = 'Update';
-    btnUpdate.style.border = 'none';
-    btnUpdate.style.background = '#007BBF';
-    btnUpdate.style.color = '#fff';
-    btnUpdate.style.padding = '8px 12px';
-    btnUpdate.style.borderRadius = '8px';
-    btnUpdate.style.cursor = 'pointer';
-    btnUpdate.style.fontWeight = '600';
-
-    const btnDismiss = document.createElement('button');
-    btnDismiss.type = 'button';
-    btnDismiss.textContent = 'Dismiss';
-    btnDismiss.style.border = '1px solid #ddd';
-    btnDismiss.style.background = '#fff';
-    btnDismiss.style.color = '#333';
-    btnDismiss.style.padding = '8px 10px';
-    btnDismiss.style.borderRadius = '8px';
-    btnDismiss.style.cursor = 'pointer';
-
-    actions.appendChild(btnUpdate);
-    actions.appendChild(btnDismiss);
-    banner.appendChild(text);
-    banner.appendChild(actions);
-
-    document.body.appendChild(banner);
-
-    // Dismiss removes the banner
-    btnDismiss.addEventListener('click', () => {
-      banner.remove();
-    });
-
-    return { banner, btnUpdate, btnDismiss };
+  let url;
+  try {
+    url = new URL(req.url);
+  } catch (e) {
+    // Malformed URL — don't intercept
+    return;
   }
 
-  // Register immediately (as early as script runs)
-  let refreshing = false;
+  // If this is cross-origin or a host we consider external, DO NOT intercept — let browser fetch
+  if (isExternalRequest(url)) {
+    return; // no event.respondWith => browser will perform default fetch
+  }
 
-  navigator.serviceWorker.register('/sw.js', { scope: '/' })
-    .then(reg => {
-      console.log('[SW] Registered with scope:', reg.scope);
-
-      // If there's an active waiting worker (from previous registration), prompt immediately
-      if (reg.waiting) {
-        console.log('[SW] update waiting (already installed)');
-        const ui = createUpdateBanner();
-        if (ui) {
-          ui.btnUpdate.addEventListener('click', () => {
-            // tell waiting worker to skipWaiting, then reload when it takes control
-            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          });
-        }
-      }
-
-      // Listen for updates found while this page is open
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        if (!newWorker) return;
-        console.log('[SW] updatefound - new worker state:', newWorker.state);
-        newWorker.addEventListener('statechange', () => {
-          console.log('[SW] new worker statechange:', newWorker.state);
-          // When newWorker.state === 'installed' and there's a controller, it means an update is waiting
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // show update prompt
-            const ui = createUpdateBanner();
-            if (!ui) return;
-            ui.btnUpdate.addEventListener('click', () => {
-              // Post message to trigger skipWaiting in worker
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
+  // For navigation requests (page loads), use network-first, fallback to cache (and offline page)
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req)
+        .then(networkRes => {
+          // Optionally update cache with navigation response
+          if (networkRes && networkRes.ok) {
+            const clone = networkRes.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(req, clone).catch(()=>{/* ignore */});
             });
           }
-        });
+          return networkRes;
+        })
+        .catch(() => {
+          // Network failed: return cached index.html or offline.html
+          return caches.match('/index.html').then(res => res || caches.match('/offline.html'));
+        })
+    );
+    return;
+  }
+
+  // For same-origin static assets: try cache first, then network; cache successful GET responses
+  event.respondWith(
+    caches.match(req).then(cached => {
+      if (cached) return cached;
+      return fetch(req).then(networkRes => {
+        if (networkRes && networkRes.ok) {
+          const clone = networkRes.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(req, clone).catch(()=>{/* ignore caching errors */});
+          });
+        }
+        return networkRes;
+      }).catch(() => {
+        // If request expects HTML, return offline page
+        const accept = req.headers.get('accept') || '';
+        if (accept.includes('text/html')) {
+          return caches.match('/offline.html');
+        }
+        // otherwise return a generic fallback response (could be empty)
+        return new Response('', { status: 504, statusText: 'Network error' });
       });
     })
-    .catch(err => console.error('[SW] Registration failed:', err));
+  );
+});
 
-  // When the new SW activates and takes control, reload to use new assets
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (refreshing) return;
-    refreshing = true;
-    console.log('[SW] controller changed — reloading page to activate new SW');
-    // small delay to allow the newly-activated SW to claim clients
-    setTimeout(() => {
-      try { window.location.reload(); } catch (e) { console.warn(e); }
-    }, 300);
-  });
+/* ---------- Message handler: SKIP_WAITING support ---------- */
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
-  // Optional: listen for messages from the SW (helpful for debugging)
-  navigator.serviceWorker.addEventListener('message', (evt) => {
-    // example: worker could send {type: 'LOG', message: '...'}
-    if (evt.data && evt.data.type === 'LOG') {
-      console.log('[SW message]', evt.data.message);
-    }
-  });
-
-})();
+/* ---------- Optional: listen for push/notification events if you use them (not included) ---------- */
