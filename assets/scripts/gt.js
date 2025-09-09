@@ -9,4 +9,4 @@
   gtag('config', 'AW-17523822825');
 </script>
 
-<!-- ad tag : AW-17523822825 -->
+<!-- ad tag : AW-17523822825     id=G-9FBX0G12S5-->
