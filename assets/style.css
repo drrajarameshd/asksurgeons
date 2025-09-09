@@ -124,7 +124,7 @@ body{
   color: inherit !important;
   fill: currentColor !important;
   stroke: currentColor !important;
-  font-size: 20px;             /* icon size — change if needed */
+  font-size: 40px;             /* icon size — change if needed */
   line-height: 1;
 }
 
