@@ -1,7 +1,7 @@
 // assets/scripts/gtag.js - pure JS init (no <script> wrapper)
 (function () {
   'use strict';
-  var GTAG_ID = 'G-9FBX0G12S5';
+  var GTAG_ID = 'AW-17523822825';
 
   // safe shim so gtag() is callable immediately
   window.dataLayer = window.dataLayer || [];
