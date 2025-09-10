@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const doctors = (await loadJSON("doctors/data.json")) || [];
-  const pillsData = (await loadJSON("doctors/pills.json")) || {};
+  const pillsData = (await loadJSON("pills.json")) || {};
 
   const doctor = doctors[idx] || doctors[0] || {
     name: "Doctor",
