@@ -1,0 +1,315 @@
+{
+  "default": {
+    "areas": [
+      "General consultation",
+      "Chronic disease management",
+      "Pre-op and post-op care",
+      "Minor procedures",
+      "Wound care",
+      "Emergency triage"
+    ],
+    "symptoms": [
+      "Pain",
+      "Swelling",
+      "Bleeding",
+      "Fever",
+      "Lump or mass",
+      "Reduced mobility"
+    ],
+    "surgeries": [
+      "Minor excisions",
+      "Drainage procedures",
+      "Endoscopic procedures",
+      "Biopsy",
+      "Hernia repair",
+      "Laparoscopic diagnostic procedures"
+    ]
+  },
+  "General Surgery": {
+    "areas": [
+      "Appendicitis and abdominal emergencies",
+      "Hernias",
+      "Breast surgery",
+      "Thyroid and endocrine surgery",
+      "Soft tissue tumours",
+      "Biliary and gallbladder disease"
+    ],
+    "symptoms": [
+      "Acute abdominal pain",
+      "Groin or abdominal lump",
+      "Breast lump or discharge",
+      "Thyroid swelling",
+      "Nausea/vomiting with pain",
+      "Jaundice"
+    ],
+    "surgeries": [
+      "Appendectomy (open/laparoscopic)",
+      "Hernia repair (open/laparoscopic)",
+      "Cholecystectomy (laparoscopic/open)",
+      "Breast lumpectomy/mastectomy",
+      "Thyroidectomy",
+      "Excision of soft tissue tumours"
+    ]
+  },
+  "Orthopedics & Joint Replacement": {
+    "areas": [
+      "Trauma and fracture management",
+      "Total joint replacement (hip/knee)",
+      "Arthritis care",
+      "Sports injuries",
+      "Spine conditions (degenerative)",
+      "Pediatric orthopaedics"
+    ],
+    "symptoms": [
+      "Joint pain and stiffness",
+      "Acute fracture after injury",
+      "Swelling around joint",
+      "Difficulty walking or weight-bearing",
+      "Back pain with radiculopathy",
+      "Limited range of motion"
+    ],
+    "surgeries": [
+      "Total knee replacement (TKR)",
+      "Total hip replacement (THR)",
+      "Open reduction and internal fixation (ORIF)",
+      "Arthroscopy (knee/shoulder)",
+      "Spinal decompression/fusion",
+      "Ligament reconstruction (ACL repair)"
+    ]
+  },
+  "Neurosurgery": {
+    "areas": [
+      "Brain tumours and space-occupying lesions",
+      "Spinal cord compression and stenosis",
+      "Traumatic brain injury",
+      "Hydrocephalus and CSF disorders",
+      "Functional neurosurgery (selected cases)",
+      "Peripheral nerve compression"
+    ],
+    "symptoms": [
+      "Severe or progressive headache",
+      "Focal neurological deficits (weakness, numbness)",
+      "Seizures",
+      "Gait disturbance or imbalance",
+      "Back pain with neurological signs",
+      "Loss of consciousness or head trauma"
+    ],
+    "surgeries": [
+      "Craniotomy for tumour excision",
+      "Microdiscectomy / laminectomy",
+      "Spinal fusion",
+      "Ventriculoperitoneal (VP) shunt",
+      "Stereotactic biopsy",
+      "Decompressive craniectomy (trauma)"
+    ]
+  },
+  "E.N.T": {
+    "areas": [
+      "Otology (ear disorders)",
+      "Rhinology (nose & sinuses)",
+      "Laryngology (throat & voice)",
+      "Pediatric ENT",
+      "Skull base and sinus surgery",
+      "Head & neck benign and malignant conditions"
+    ],
+    "symptoms": [
+      "Ear pain or discharge",
+      "Hearing loss or tinnitus",
+      "Nasal obstruction or recurrent sinusitis",
+      "Throat pain or hoarseness",
+      "Swallowing difficulty",
+      "Neck lump or persistent sore throat"
+    ],
+    "surgeries": [
+      "Tonsillectomy / Adenoidectomy",
+      "Myringotomy with grommet (ventilation tube)",
+      "Functional endoscopic sinus surgery (FESS)",
+      "Mastoidectomy",
+      "Tympanoplasty / Ossiculoplasty",
+      "Microlaryngoscopy and excision of laryngeal lesions",
+      "Head & neck tumour excision and neck dissection"
+    ]
+  },
+  "Urology & Kidney Surgery": {
+    "areas": [
+      "Urinary stone disease",
+      "Benign prostatic hyperplasia (BPH)",
+      "Uro-oncology (kidney/bladder/prostate)",
+      "Urinary tract infections and complications",
+      "Reconstructive urology",
+      "Renal trauma and emergencies"
+    ],
+    "symptoms": [
+      "Flank or loin pain",
+      "Hematuria (blood in urine)",
+      "Lower urinary tract symptoms (frequency, hesitancy)",
+      "Acute urinary retention",
+      "Recurrent UTIs",
+      "Scrotal or testicular pain"
+    ],
+    "surgeries": [
+      "Percutaneous nephrolithotomy (PCNL)",
+      "Ureteroscopy with laser lithotripsy",
+      "Transurethral resection of prostate (TURP)",
+      "Radical nephrectomy / partial nephrectomy",
+      "Radical cystectomy (bladder cancer)",
+      "Ureteric reimplantation / reconstruction"
+    ]
+  },
+  "Cardiac & Vascular Surgery": {
+    "areas": [
+      "Coronary artery disease and bypass surgery",
+      "Valvular heart disease",
+      "Aortic aneurysm and dissection",
+      "Peripheral vascular disease",
+      "Carotid artery disease",
+      "Congenital cardiac surgery (selected cases)"
+    ],
+    "symptoms": [
+      "Chest pain / angina",
+      "Exertional breathlessness",
+      "Syncope or presyncope",
+      "Leg claudication or rest pain",
+      "Sudden pulseless limb",
+      "Palpitations with structural disease"
+    ],
+    "surgeries": [
+      "Coronary artery bypass grafting (CABG)",
+      "Valve repair or replacement (AV/mitral)",
+      "Aortic aneurysm repair (open/endovascular)",
+      "Peripheral bypass / endarterectomy",
+      "Carotid endarterectomy",
+      "Thoracic endovascular aortic repair (TEVAR)"
+    ]
+  },
+  "GI & Liver Surgery": {
+    "areas": [
+      "Hepatobiliary disease (liver, gallbladder, bile ducts)",
+      "Pancreatic disorders",
+      "Gastrointestinal malignancies",
+      "Complex abdominal wall and hernia",
+      "Inflammatory bowel disease complications",
+      "Biliary obstruction and jaundice"
+    ],
+    "symptoms": [
+      "Right upper quadrant / epigastric pain",
+      "Obstructive jaundice",
+      "Unintentional weight loss",
+      "Persistent vomiting or GI bleeding",
+      "Chronic abdominal pain",
+      "Changes in bowel habits"
+    ],
+    "surgeries": [
+      "Hepatectomy (liver resection)",
+      "Whipple procedure (pancreaticoduodenectomy)",
+      "Liver transplant (referral/coordination)",
+      "Laparoscopic/open cholecystectomy",
+      "Segmental colectomy",
+      "Biliary bypass or drainage procedures"
+    ]
+  },
+  "Onco (Cancer) Surgery": {
+    "areas": [
+      "Surgical oncology across organ systems",
+      "Breast cancer surgery and reconstruction",
+      "GI and hepatopancreatobiliary oncology",
+      "Soft tissue and sarcoma surgery",
+      "Multidisciplinary cancer care coordination",
+      "Oncoplastic and limb-sparing surgeries"
+    ],
+    "symptoms": [
+      "Palpable mass or lump",
+      "Unexplained weight loss",
+      "Chronic pain at site of lesion",
+      "Bleeding or ulcerated lesions",
+      "Lymph node enlargement",
+      "Persistent non-healing wounds"
+    ],
+    "surgeries": [
+      "Wide local excision / mastectomy",
+      "Radical resections for GI cancers",
+      "Lymph node dissection",
+      "Oncoplastic reconstructive procedures",
+      "Sarcoma excision with limb-sparing techniques",
+      "Palliative debulking procedures"
+    ]
+  },
+  "Plastic & Reconstructive": {
+    "areas": [
+      "Reconstructive microsurgery",
+      "Trauma reconstruction (soft tissue, limbs)",
+      "Cosmetic and aesthetic procedures",
+      "Burn management and reconstruction",
+      "Hand surgery and nerve repair",
+      "Post-oncologic reconstruction"
+    ],
+    "symptoms": [
+      "Complex soft tissue defects",
+      "Non-healing wounds / chronic ulcers",
+      "Post-traumatic deformity",
+      "Functional loss of hand or limb",
+      "Severe burns",
+      "Cosmetic concerns (deformity/asymmetry)"
+    ],
+    "surgeries": [
+      "Local and free flap reconstruction",
+      "Skin grafting",
+      "Microsurgical replantation",
+      "Scar revision and contracture release",
+      "Breast reconstruction (implant/flap)",
+      "Tendon and nerve repair"
+    ]
+  },
+  "Renal & Pancreatic Transplant": {
+    "areas": [
+      "Pre- and post-transplant management",
+      "Kidney transplant surgery and follow-up",
+      "Pancreas transplant (select centres)",
+      "Living donor evaluation and surgery",
+      "Immunosuppression management coordination",
+      "Transplant complication management"
+    ],
+    "symptoms": [
+      "Progressive renal failure symptoms",
+      "Fluid overload and decreased urine output",
+      "Uncontrolled blood sugar (for pancreas cases)",
+      "Graft pain or tenderness",
+      "Signs of graft dysfunction (reduced output)",
+      "Post-transplant infection or rejection symptoms"
+    ],
+    "surgeries": [
+      "Living donor nephrectomy",
+      "Deceased donor renal transplant",
+      "Simultaneous pancreas-kidney transplant (SPK)",
+      "Pancreas transplant (selected cases)",
+      "Graft biopsy and revision surgeries",
+      "Transplant ureteric/vascular reconstructions"
+    ]
+  },
+  "Laparoscopic Surgery": {
+    "areas": [
+      "Minimally invasive abdominal surgery",
+      "Diagnostic laparoscopy and adhesiolysis",
+      "Laparoscopic oncologic resections (selected)",
+      "Advanced laparoscopic hernia repair",
+      "Bariatric procedures (select centres)",
+      "Single-incision and robotic-assisted procedures (where available)"
+    ],
+    "symptoms": [
+      "Chronic or acute abdominal pain suitable for laparoscopy",
+      "Recurrent biliary colic",
+      "Dyspepsia with structural disease",
+      "Post-operative adhesional pain",
+      "Abdominal lump or hernia symptoms",
+      "Symptoms requiring diagnostic laparoscopy"
+    ],
+    "surgeries": [
+      "Laparoscopic cholecystectomy",
+      "Laparoscopic appendectomy",
+      "Laparoscopic hernia repairs (TAPP/TEP)",
+      "Laparoscopic colectomy",
+      "Laparoscopic splenectomy",
+      "Laparoscopic adhesiolysis and diagnostic laparoscopy"
+    ]
+  }
+}
