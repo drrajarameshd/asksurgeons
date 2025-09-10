@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <i class="fa-solid fa-heartbeat" aria-hidden="true"></i><span>Symptoms</span>
       </button>
       <button type="button" class="pill" data-pill="surgeries" aria-label="Common surgeries">
-        <i class="fa-solid fa-scalpel" aria-hidden="true"></i><span>Surgeries</span>
+        <i class="fa-user-md" aria-hidden="true"></i><span>Surgeries</span>
       </button>
     `;
     menu.addEventListener("click", (ev) => {
