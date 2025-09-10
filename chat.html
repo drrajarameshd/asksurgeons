@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Chat - Doctor</title>
-  <link rel="stylesheet" href="assets/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <meta name="theme-color" content="#007BBF" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Chat - Doctor</title>
+<link rel="stylesheet" href="assets/style.css" />
+<link rel="stylesheet" href="assets/chat.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<meta name="theme-color" content="#007BBF" />
 </head>
 <body>
 
-  <!-- Google tag (gtag.js) - place in <head> -->
+
+<!-- Google tag (gtag.js) - place in <head> -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FBX0G12S5"></script>
 <script src="/assets/scripts/gtag.js"></script>
 
 
-  <!-- header built by script -->
-  <div id="chat-root"></div>
+<!-- header built by script -->
+<div id="chat-root"></div>
 
-  <!-- main chat area -->
-  <div class="chat-area" id="chat-area"></div>
 
-  <!-- composer -->
-  <div class="composer">
-    <input id="composer-input" placeholder="Type a message..." aria-label="Type a message" />
-    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
-  </div>
-  <script src="assets/scripts/chat.js"></script>
-   <script src="assets/scripts/sw-register.js" defer></script>
+<!-- main chat area -->
+<div class="chat-area" id="chat-area"></div>
+
+
+<!-- bottom action bar (call, back to directory, whatsapp) -->
+<nav class="bottom-actions" role="navigation" aria-label="Chat actions">
+<a id="call-btn" class="action-btn" href="tel:+918062182411" aria-label="Call AskSurgeons"><span class="icon"><i class="fas fa-phone"></i></span><span class="label">Call</span></a>
+<button id="dir-btn" class="action-btn primary" aria-label="Back to directory"><span class="icon"><i class="fas fa-arrow-left"></i></span><span class="label">Directory</span></button>
+<button id="wa-btn" class="action-btn wa" aria-label="Open WhatsApp"><span class="icon"><i class="fab fa-whatsapp"></i></span><span class="label">WhatsApp</span></button>
+</nav>
+
+
+<script src="assets/chat.js"></script>
 </body>
 </html>
