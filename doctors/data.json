@@ -4,76 +4,84 @@
     "speciality": "General Medicine",
     "image": "doctors/images/image1.webp",
     "bio": "Consultant Physician with long experience in internal medicine, chronic disease management and patient counseling. Provides holistic care and coordinates with surgeons when needed.",
-    "department": "General Medicine"
+    "department": "General Medicine",
+    "areas_of_speciality": [
+      "Chronic disease management (diabetes, hypertension)",
+      "Acute and infectious disease care",
+      "Preventive medicine and health checkups",
+      "Medication review and polypharmacy management",
+      "Patient counselling and lifestyle modification"
+    ]
   },
   {
     "name": "Dr. Karthik, MS, MCh (PGI)",
     "speciality": "Transplant Surgeon",
     "image": "doctors/images/image2.webp",
     "bio": "Transplant surgeon specializing in renal and pancreatic transplantation. Experienced in pre-transplant evaluation, perioperative care and transplant follow-up.",
-    "department": "Transplant Surgery"
+    "department": "Transplant Surgery",
+    "areas_of_speciality": [
+      "Pre-transplant evaluation and optimisation",
+      "Renal transplant surgery and follow-up",
+      "Pancreas transplantation",
+      "Immunosuppression management",
+      "Living donor assessment and counselling"
+    ]
   },
   {
     "name": "Dr. D. Lakshmi Prasanna, MBBS",
     "speciality": "General Practitioner",
     "image": "doctors/images/image3.webp",
     "bio": "Experienced MBBS practitioner providing quality diagnosis, treatment, and compassionate patient care",
-    "department": "Primary Care"
+    "department": "Primary Care",
+    "areas_of_speciality": [
+      "Routine outpatient consultations",
+      "Minor procedure management",
+      "Vaccination and preventive care",
+      "Acute illness management",
+      "Referral coordination"
+    ]
   },
-   {
+  {
     "name": "Dr. Nagarjuna, MS (PGI)",
     "speciality": "E.N.T",
     "image": "doctors/images/image4.webp",
     "bio": "Skilled ENT specialist treating ear, nose & throat conditions with advanced care and patient-focused approach.",
-    "department": "ENT"
+    "department": "ENT",
+    "areas_of_speciality": [
+      "Otology: ear infections and hearing issues",
+      "Rhinology: sinusitis and nasal obstruction",
+      "Laryngology: voice and throat disorders",
+      "Endoscopic sinus and ear surgery",
+      "Pediatric ENT care"
+    ]
   },
   {
     "name": "Dr. Laxminath Sivaraju, MCh",
     "speciality": "Neurosurgery",
     "image": "doctors/images/image5.webp",
     "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
-    "department": "Neurosurgery"
+    "department": "Neurosurgery",
+    "areas_of_speciality": [
+      "Spinal decompression and fusion",
+      "Cranial tumor surgery",
+      "Neurotrauma management",
+      "Functional neurosurgery",
+      "Minimally invasive spinal techniques"
+    ]
   },
   {
     "name": "Dr. B. Sudhakar MS (Osmania)",
     "speciality": "Orthopedics & Joint Replacement",
     "image": "doctors/images/image6.webp",
     "bio": "Orthopedic surgeon focusing on joint replacements (hip, knee) and complex trauma reconstructions. Emphasis on rehab protocols and outcome tracking.",
-    "department": "Orthopedics"
+    "department": "Orthopedics",
+    "areas_of_speciality": [
+      "Hip and knee replacement",
+      "Trauma and fracture care",
+      "Arthroscopy and sports injuries",
+      "Pre- and post-op rehabilitation guidance",
+      "Osteoarthritis management"
+    ]
   },
   {
-    "name": "Dr. R. Iyer, MCh",
-    "speciality": "Cardiothoracic Surgery",
-    "image": "doctors/images/image7.webp",
-    "bio": "Cardiac and vascular surgeon experienced in coronary bypass, valvular surgery and vascular reconstructions. Works closely with cardiology team.",
-    "department": "Cardiac Surgery"
-  },
-  {
-    "name": "Dr. Vinay MS, Mch(Nims)",
-    "speciality": "Urology & Kidney Surgery",
-    "image": "doctors/images/image8.webp",
-    "bio": "Urologist with expertise in endourology, stone disease and reconstructive urology. Provides perioperative and follow-up care.",
-    "department": "Urology"
-  },
-  {
-    "name": "Dr. H. Kulkarni, MS",
-    "speciality": "Gastrointestinal & Liver Surgery",
-    "image": "doctors/images/image9.webp",
-    "bio": "GI surgeon experienced in hepatobiliary procedures, laparoscopic gastric surgery and complex GI oncology cases.",
-    "department": "GI & Hepatobiliary"
-  },
-  {
-    "name": "Dr. S. Mehta, MCh",
-    "speciality": "Onco (Cancer) Surgery",
-    "image": "doctors/images/image10.webp",
-    "bio": "Surgical oncologist providing multidisciplinary care for solid organ cancers. Focus on oncologic safety and functional outcomes.",
-    "department": "Oncology"
-  },
-  {
-    "name": "Dr. L. Narayan, MS",
-    "speciality": "Plastic & Reconstructive Surgery",
-    "image": "doctors/images/image11.webp",
-    "bio": "Plastic surgeon specializing in reconstructive microsurgery, trauma reconstruction and cosmetic procedures with an emphasis on natural outcomes.",
-    "department": "Plastic Surgery"
-  }
-]
+    "name": "Dr. R. Iyer, M
