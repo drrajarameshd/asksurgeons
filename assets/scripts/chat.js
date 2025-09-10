@@ -2,7 +2,7 @@
 // Simplified chat.js — department-only pills (single pills.json), uses existing .pill CSS.
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const ASKSURGEONS_NUMBER = "918062182411";
+  const ASKSURGEONS_NUMBER = "+918062182411";
   const WA_BASE = `https://wa.me/${ASKSURGEONS_NUMBER}?text=`;
 
   const params = new URLSearchParams(location.search);
