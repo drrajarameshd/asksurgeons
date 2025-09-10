@@ -1,4 +1,5 @@
-// Simplified chat.js — department-only pills (single pills.json), no doctor-specific files.
+// assets/scripts/chat.js
+// Simplified chat.js — department-only pills (single pills.json), uses existing .pill CSS.
 
 document.addEventListener("DOMContentLoaded", async () => {
   const ASKSURGEONS_NUMBER = "918062182411";
@@ -74,14 +75,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     saveToSession(messages);
   }
 
-  // Pill menu creator (same for every bubble)
+  // Create pill menu using existing .pill styles
   function createPillMenu() {
     const menu = document.createElement("div");
     menu.className = "pill-menu";
     menu.innerHTML = `
-      <button type="button" class="pill-btn" data-pill="areas"><i class="fas fa-stethoscope"></i><span>Areas</span></button>
-      <button type="button" class="pill-btn" data-pill="symptoms"><i class="fas fa-heartbeat"></i><span>Symptoms</span></button>
-      <button type="button" class="pill-btn" data-pill="surgeries"><i class="fas fa-scalpel"></i><span>Surgeries</span></button>
+      <button type="button" class="pill" data-pill="areas" aria-label="Areas of expertise">
+        <i class="fa-solid fa-stethoscope" aria-hidden="true"></i><span>Areas</span>
+      </button>
+      <button type="button" class="pill" data-pill="symptoms" aria-label="Common symptoms">
+        <i class="fa-solid fa-heartbeat" aria-hidden="true"></i><span>Symptoms</span>
+      </button>
+      <button type="button" class="pill" data-pill="surgeries" aria-label="Common surgeries">
+        <i class="fa-solid fa-scalpel" aria-hidden="true"></i><span>Surgeries</span>
+      </button>
     `;
     menu.addEventListener("click", (ev) => {
       const btn = ev.target.closest("button[data-pill]");
