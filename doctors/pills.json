@@ -365,5 +365,40 @@
       "Basic joint injections / aspirations"
     ]
   }
+
+  "Obstetrics & Gynecology": {
+  "areas": [
+    "Antenatal and postnatal care",
+    "High-risk pregnancy management",
+    "PCOS and infertility management",
+    "Adolescent and perimenopausal health management",
+    "Menstrual disorders and hormonal issues",
+    "Gynecological oncology (uterine, ovarian, cervical cancers)",
+    "Urogynecology and pelvic floor disorders",
+    "Contraception and family planning",
+    "Minimal invasive surgery (diagnostic and operative laparoscopy, hysteroscopy)"
+  ],
+  "symptoms": [
+    "Irregular or heavy menstrual bleeding",
+    "Severe pelvic pain or cramps",
+    "Abnormal vaginal discharge or bleeding",
+    "Difficulty conceiving",
+    "Recurrent miscarriages",
+    "Urinary incontinence or prolapse symptoms",
+    "Breast lump or nipple discharge",
+    "Complications during pregnancy (bleeding, high BP, reduced fetal movements)"
+  ],
+  "surgeries": [
+    "Cesarean section (C-section)",
+    "Hysterectomy (abdominal, vaginal, laparoscopic)",
+    "Myomectomy (fibroid removal)",
+    "Ovarian cystectomy",
+    "Tubectomy / Tubal ligation (family planning)",
+    "Laparoscopy for infertility and endometriosis",
+    "Hysteroscopic polypectomy / septum resection",
+    "Oncological surgeries (radical hysterectomy, ovarian cancer surgery)"
+  ]
+}
+
  
 }
