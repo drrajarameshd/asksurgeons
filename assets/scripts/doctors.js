@@ -1,33 +1,32 @@
-// assets/doctors.js
-// Robust doctors list + search. Uses data-index to keep original indices stable.
-//
-// Usage: include <script src="assets/doctors.js"></script> on doctors.html
-// Assumes there is: <input id="doctors-search"> and <ul class="wa-list" id="doctors-list"></ul>
-
+// assets/scripts/doctors.js
 document.addEventListener('DOMContentLoaded', () => {
   const LIST_EL = document.getElementById('doctors-list');     // <ul id="doctors-list" class="wa-list">
-  const SEARCH_INPUT = document.getElementById('doc_search-input'); // <input id="search-input">
+  const SEARCH_INPUT = document.getElementById('doc_search-input'); // <input id="doc_search-input">
   const NO_RESULTS_HTML = '<li class="wa-item" style="justify-content:center;background:transparent;box-shadow:none;color:#666;">No results found</li>';
   const searchToggle = document.getElementById("search-toggle");
   const searchBar = document.getElementById("search-bar");
-  
-
 
   if (!LIST_EL) {
     console.warn('doctors.js: #doctors-list not found in DOM.');
     return;
   }
 
-  // Load doctors data
+  // Try multiple paths for data.json (doctors/data.json preferred; fallback to data.json)
   async function loadDoctors() {
-    try {
-      const res = await fetch('doctors/data.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return await res.json();
-    } catch (err) {
-      console.error('Failed to load doctors/data.json', err);
-      return [];
+    const candidates = ['doctors/data.json', 'data.json'];
+    for (const path of candidates) {
+      try {
+        const res = await fetch(path, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' for ' + path);
+        const json = await res.json();
+        console.log('Loaded doctors from', path);
+        return json;
+      } catch (err) {
+        // try next
+        console.warn('Failed to load', path, err);
+      }
     }
+    return [];
   }
 
   // Render a single doctor li (returns DOM node)
@@ -78,14 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render full list
     function renderList(filteredIndices = null) {
-      // If filteredIndices is null => show all
       LIST_EL.innerHTML = '';
-      const indices = Array.isArray(filteredIndices) ? filteredIndices : doctors.map((_, i) => i);
+      const indices = Array.isArray(filteredIndices)
+        ? filteredIndices
+        : doctors.map((_, i) => i);
+
       if (indices.length === 0) {
         LIST_EL.innerHTML = NO_RESULTS_HTML;
         return;
       }
-      // Append nodes
+
       const frag = document.createDocumentFragment();
       for (const i of indices) {
         const doc = doctors[i];
@@ -107,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = `chat.html?doc=${encodeURIComponent(idx)}`;
     });
 
-    // Also support keyboard "Enter" / Space activation for accessibility via delegation
     LIST_EL.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         const item = e.target.closest('.wa-item');
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Search handler (debounced)
+    // Search handler (debounced) — only if input exists
     if (SEARCH_INPUT) {
       const doSearch = () => {
         const q = (SEARCH_INPUT.value || '').trim().toLowerCase();
@@ -126,11 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
           renderList(); // show all
           return;
         }
-        // find matching original indices
         const matched = [];
         for (let i = 0; i < doctors.length; i++) {
           const d = doctors[i];
-          const hay = `${d.name || ''} ${d.speciality || ''} ${d.bio || ''}`.toLowerCase();
+          const hay = `${d.name || ''} ${d.speciality || ''} ${d.bio || ''} ${d.department || ''}`.toLowerCase();
           if (hay.indexOf(q) !== -1) matched.push(i);
         }
         renderList(matched);
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const deb = debounce(doSearch, 180);
       SEARCH_INPUT.addEventListener('input', deb, { passive: true });
-      // optional: clear on Escape key
       SEARCH_INPUT.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           SEARCH_INPUT.value = '';
@@ -147,32 +145,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    // wire search toggle (show/hide search bar)
+    if (searchToggle && searchBar) {
+      searchToggle.addEventListener('click', () => {
+        if (searchBar.style.display === 'none' || !searchBar.style.display) {
+          searchBar.style.display = 'block';
+          SEARCH_INPUT?.focus();
+        } else {
+          searchBar.style.display = 'none';
+          if (SEARCH_INPUT) {
+            SEARCH_INPUT.value = '';
+            renderList();
+          }
+        }
+      });
+    }
+
   })(); // init
 
- // search toggle
-  searchToggle?.addEventListener('click', () => {
-    if (searchBar.style.display === 'none') {
-      searchBar.style.display = 'block';
-      SEARCH_INPUT.focus();
-    } else {
-      searchBar.style.display = 'none';
-      SEARCH_INPUT.value = '';
-      filtered = doctors.slice();
-      renderList(filtered);
-    }
-  });
-
-  // search input
-  SEARCH_INPUT?.addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
-    filtered = doctors.filter(d => (d.name + ' ' + d.speciality + ' ' + (d.department||'')).toLowerCase().includes(q));
-    renderList(filtered);
-  });
-
 });
-
-
-
-
-
-
