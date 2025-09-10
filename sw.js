@@ -23,6 +23,7 @@ const PRECACHE_URLS = [
   '/assets/style.css',
   '/assets/scripts/doctors.js',
   '/assets/scripts/script.js',
+  '/assets/scripts/chat.js',
   '/assets/scripts/sw-register.js',
   '/assets/icons/favicon.png',
   '/assets/icons/icon-192.png',
