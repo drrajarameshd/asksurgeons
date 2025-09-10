@@ -311,5 +311,59 @@
       "Laparoscopic splenectomy",
       "Laparoscopic adhesiolysis and diagnostic laparoscopy"
     ]
+  }, 
+
+  "General Medicine": {
+    "areas": [
+      "Acute medical care (infections, exacerbations)",
+      "Chronic disease management (diabetes, HTN, COPD, asthma)",
+      "Preventive care and health checks",
+      "Geriatric care and multimorbidity management",
+      "Acute cardiopulmonary triage & stabilization",
+      "Vaccinations and travel advice"
+    ],
+    "symptoms": [
+      "Fever, chills",
+      "Cough, shortness of breath",
+      "Chest discomfort or palpitations",
+      "Uncontrolled blood pressure or blood sugar",
+      "Fatigue, weight loss or gain",
+      "Dizziness, syncope or confusion"
+    ],
+    "surgeries": [
+      "Minor procedures and bedside interventions",
+      "Incision & drainage of superficial abscesses",
+      "Suturing of minor lacerations",
+      "Joint aspiration / injection (diagnostic/therapeutic)",
+      "Simple skin lesion removals (minor excisions)",
+      "Central/ peripheral IV cannulation and sample/line procedures"
+    ]
+  },
+  "General Practitioner": {
+    "areas": [
+      "First-contact & longitudinal primary care",
+      "Acute illness assessment and minor trauma",
+      "Chronic disease follow-up and medication management",
+      "Child & adolescent health, immunisation",
+      "Women's health screening and routine antenatal follow-up",
+      "Lifestyle, preventive and occupational health"
+    ],
+    "symptoms": [
+      "Upper respiratory symptoms (cold, sore throat)",
+      "Fever, aches and general malaise",
+      "Abdominal pain, diarrhoea, vomiting",
+      "Musculoskeletal pain, sprains and minor injuries",
+      "Skin rashes and minor infections",
+      "Urinary symptoms and uncomplicated UTIs"
+    ],
+    "surgeries": [
+      "Minor office procedures",
+      "Wound cleaning, suturing and dressing",
+      "Incision & drainage of small abscesses",
+      "Cryotherapy for small skin lesions",
+      "Ear syringing and simple ENT procedures",
+      "Basic joint injections / aspirations"
+    ]
   }
+ 
 }
