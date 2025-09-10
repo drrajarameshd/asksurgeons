@@ -21,7 +21,6 @@ const PRECACHE_URLS = [
   '/offline.html',
   '/manifest.json',
   '/assets/style.css',
-  '/assets/scripts/chat.js',
   '/assets/scripts/doctors.js',
   '/assets/scripts/script.js',
   '/assets/scripts/sw-register.js',
