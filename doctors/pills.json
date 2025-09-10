@@ -398,7 +398,38 @@
     "Hysteroscopic polypectomy / septum resection",
     "Oncological surgeries (radical hysterectomy, ovarian cancer surgery)"
   ]
+},"Pathology": {
+  "areas": [
+    "Clinical pathology (blood, urine, stool, body fluids analysis)",
+    "Hematology (anemia, leukemia, coagulation disorders)",
+    "Histopathology (biopsy and tissue diagnosis)",
+    "Cytopathology (FNAC, Pap smear, fluid cytology)",
+    "Immunohistochemistry and molecular pathology",
+    "Cancer diagnosis and staging",
+    "Infectious disease pathology",
+    "Bone marrow evaluation"
+  ],
+  "symptoms": [
+    "Unexplained anemia or weakness",
+    "Persistent or unexplained fever",
+    "Generalized lymph node swelling",
+    "Abnormal bleeding or bruising",
+    "Unexplained weight loss",
+    "Non-healing ulcers or suspicious lumps",
+    "Chronic infections not responding to treatment",
+    "Cancer-related symptoms (loss of appetite, night sweats, recurrent infections)"
+  ],
+  "surgeries": [
+    "Fine Needle Aspiration Cytology (FNAC) of lumps and swellings",
+    "Bone marrow aspiration and biopsy",
+    "Exfoliative cytology (Pap smear, body fluid analysis)",
+    "Frozen section intraoperative consultation",
+    "Biopsy grossing and tissue processing",
+    "Immunohistochemistry panels for cancer workup",
+    "Molecular pathology tests (PCR, FISH, NGS)"
+  ]
 }
+
 
  
 }
