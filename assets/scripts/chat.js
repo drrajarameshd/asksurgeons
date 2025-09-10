@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const menu = document.createElement("div");
     menu.className = "pill-menu";
     menu.innerHTML = `
-      <button type="button" class="pill" data-pill="areas" aria-label="Areas of expertise">
+      <button type="button" class="pill" data-pill="Specialisation" aria-label="Areas of expertise">
         <i class="fa-solid fa-stethoscope" aria-hidden="true"></i><span>Areas</span>
       </button>
       <button type="button" class="pill" data-pill="symptoms" aria-label="Common symptoms">
