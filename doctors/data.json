@@ -20,7 +20,7 @@
     "bio": "Experienced MBBS practitioner providing quality diagnosis, treatment, and compassionate patient care",
     "department": "Primary Care"
   },
-   {
+  {
     "name": "Dr. Nagarjuna, MS (PGI)",
     "speciality": "E.N.T",
     "image": "doctors/images/image4.webp",
@@ -55,12 +55,12 @@
     "bio": "Urologist with expertise in endourology, stone disease and reconstructive urology. Provides perioperative and follow-up care.",
     "department": "Urology"
   },
-  {
-    "name": "Dr. H. Kulkarni, MS",
-    "speciality": "Gastrointestinal & Liver Surgery",
+ {
+    "name": "Dr. P. A. Sanjuktha, MD",
+    "speciality": "Pathology",
     "image": "doctors/images/image9.webp",
-    "bio": "GI surgeon experienced in hepatobiliary procedures, laparoscopic gastric surgery and complex GI oncology cases.",
-    "department": "GI & Hepatobiliary"
+    "bio": "Pathologist experienced in laboratory diagnostics, FNAC, bone marrow procedures, biopsy evaluation and cancer diagnosis.",
+    "department": "Pathology"
   },
   {
     "name": "Dr. S. Mehta, MCh",
@@ -68,12 +68,6 @@
     "image": "doctors/images/image10.webp",
     "bio": "Surgical oncologist providing multidisciplinary care for solid organ cancers. Focus on oncologic safety and functional outcomes.",
     "department": "Oncology"
-  },
-  {
-    "name": "Dr. L. Narayan, MS",
-    "speciality": "Plastic Surgery",
-    "image": "doctors/images/image11.webp",
-    "bio": "Plastic surgeon specializing in reconstructive microsurgery, trauma reconstruction and cosmetic procedures with an emphasis on natural outcomes.",
-    "department": "Plastic & Reconstructive Surgery"
   }
 ]
+
