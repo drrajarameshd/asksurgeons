@@ -21,11 +21,11 @@
     "department": "Primary Care"
   },
   {
-    "name": "Dr. Nagarjuna, MS (PGI)",
-    "speciality": "E.N.T",
+    "name": "Dr. P. A. Sanjuktha, MD",
+    "speciality": "Pathology",
     "image": "doctors/images/image4.webp",
-    "bio": "MS(PGI), Fellow Head and Neck Oncology(RCS-Eng), Fellow IFHNOS,  Fellow EBEORL-HNS, Ex-SR HBCHRC ( A unit of TMH Mumbai).",
-    "department": "ENT"
+    "bio": "Pathologist experienced in laboratory diagnostics, FNAC, bone marrow procedures, biopsy evaluation and cancer diagnosis.",
+    "department": "Pathology"
   },
   {
     "name": "Dr. B. Naresh, MCh(Osmania)",
@@ -55,12 +55,12 @@
     "bio": "Urologist with expertise in endourology, stone disease and reconstructive urology. Provides perioperative and follow-up care.",
     "department": "Urology"
   },
- {
-    "name": "Dr. P. A. Sanjuktha, MD",
-    "speciality": "Pathology",
+   {
+    "name": "Dr. Nagarjuna, MS (PGI)",
+    "speciality": "E.N.T",
     "image": "doctors/images/image9.webp",
-    "bio": "Pathologist experienced in laboratory diagnostics, FNAC, bone marrow procedures, biopsy evaluation and cancer diagnosis.",
-    "department": "Pathology"
+    "bio": "MS(PGI), Fellow Head and Neck Oncology(RCS-Eng), Fellow IFHNOS,  Fellow EBEORL-HNS, Ex-SR HBCHRC ( A unit of TMH Mumbai).",
+    "department": "ENT"
   },
   {
     "name": "Dr. S. Mehta, MCh",
