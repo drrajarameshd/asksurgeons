@@ -28,11 +28,11 @@
     "department": "Pathology"
   },
   {
-    "name": "Dr. B. Naresh, MCh(Osmania)",
-    "speciality": "Neurosurgery",
+    "name": "Dr. Nagarjuna, MS (PGI)",
+    "speciality": "E.N.T",
     "image": "doctors/images/image5.webp",
-    "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
-    "department": "Neurosurgery"
+    "bio": "MS(PGI), Fellow Head and Neck Oncology(RCS-Eng), Fellow IFHNOS,  Fellow EBEORL-HNS, Ex-SR HBCHRC ( A unit of TMH Mumbai).",
+    "department": "ENT"
   },
   {
     "name": "Dr. B. Sudhakar MS (Osmania)",
@@ -56,11 +56,11 @@
     "department": "Urology"
   },
    {
-    "name": "Dr. Nagarjuna, MS (PGI)",
-    "speciality": "E.N.T",
+    "name": "Dr. B. Naresh, MCh(Osmania)",
+    "speciality": "Neurosurgery",
     "image": "doctors/images/image9.webp",
-    "bio": "MS(PGI), Fellow Head and Neck Oncology(RCS-Eng), Fellow IFHNOS,  Fellow EBEORL-HNS, Ex-SR HBCHRC ( A unit of TMH Mumbai).",
-    "department": "ENT"
+    "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
+    "department": "Neurosurgery"
   },
   {
     "name": "Dr. S. Mehta, MCh",
