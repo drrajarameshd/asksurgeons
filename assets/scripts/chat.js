@@ -1,11 +1,7 @@
-// assets/chat.js
+// assets/scripts/chat.js
 // Final chat logic (sessionStorage, single auto-reply with WA connect button).
-// Behavior:
-// - Session-only persistence (cleared when app/tab closed).
-// - Doctor bio shown initially (no WA button).
-// - On first patient message, a polite auto-reply with a single green WA button is added (persisted for session).
-// - Composer adds local messages; WA opens only when user taps the green button.
-// - Call icon always dials AskSurgeons helpline.
+// Composer/input removed; WA bottom button now opens WhatsApp with a prefilled message
+// that includes doctor name & speciality.
 
 document.addEventListener("DOMContentLoaded", async () => {
   const ASKSURGEONS_NUMBER = "918062182411";
@@ -44,8 +40,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const root = document.getElementById("chat-root");
   const area = document.getElementById("chat-area");
-  const input = document.getElementById("composer-input");
-  const sendBtn = document.getElementById("send-btn");
 
   root.innerHTML = `
     <header class="chat-header" role="banner">
@@ -98,6 +92,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     inner.innerHTML = msg.content;
     wrapper.appendChild(inner);
 
+    // keep auto_reply handling (in case you later push such messages),
+    // but the UI no longer creates 'me' messages from a composer.
     if (msg.type === "auto_reply") {
       const waBtn = document.createElement("button");
       waBtn.className = "wa-connect-btn";
@@ -143,59 +139,42 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function buildWhatsAppMessage(patientText = "") {
+    // Build a prefilled message that includes doctor name & speciality.
     const lines = [];
     const plainDocName = doctor.name.replace(/^Dr\.\s*/i, "").trim();
-    lines.push(`Hi Dr. ${plainDocName},`);
+    lines.push(`Hello,`);
     lines.push("");
+    lines.push(`I'd like to consult with Dr. ${plainDocName} (${doctor.speciality}).`);
     if (patientText && patientText.length) {
       const truncated = patientText.length > 800 ? patientText.slice(0, 800) + "..." : patientText;
+      lines.push("");
       lines.push(`My query: ${truncated}`);
     } else {
-      lines.push(`I would like to discuss my case with you.`);
+      lines.push("");
+      lines.push(`Please advise how to proceed.`);
     }
     lines.push("");
-    lines.push(`Doctor specialty: ${doctor.speciality}`);
-    lines.push("");
-    lines.push(`— Sent via AskSurgeons`);
+    lines.push("— Sent via AskSurgeons");
     return lines.join("\n");
   }
 
   renderAll();
 
-  function onSend() {
-    const text = (input.value || "").trim();
-    if (!text) return;
+  // ---- Removed composer / input / send button logic ----
+  // The UI no longer has a composer. Instead the bottom WhatsApp button will
+  // open WhatsApp with a prefilled message including the doctor's name & speciality.
 
-    const myMsg = { type: "me", content: `<div>${esc(text)}</div>`, time: nowTime(), meta: {} };
-    messages.push(myMsg);
-    saveToSession(messages);
-    renderAll();
-    input.value = "";
-
-    const hasAuto = messages.some(m => m.type === "auto_reply");
-    if (!hasAuto) {
-      const polite = `<strong>AskSurgeons</strong><br/>Thanks — we’ve received your message. To continue securely and get a prompt response, please connect with AskSurgeons on WhatsApp. Tap the green WhatsApp button below to open WhatsApp and send your message to our team.`;
-      const autoMsg = {
-        type: "auto_reply",
-        content: polite,
-        time: nowTime(),
-        meta: { patientMsg: text }
-      };
-      messages.push(autoMsg);
-      saveToSession(messages);
-      renderAll();
-    } else {
-      const tip = { type: "system", content: `<em>Tip:</em> To continue securely, tap the green WhatsApp button above.`, time: nowTime(), meta: {} };
-      messages.push(tip);
-      saveToSession(messages);
-      renderAll();
-    }
+  const waBtn = document.getElementById("wa-btn");
+  if (waBtn) {
+    waBtn.addEventListener("click", (ev) => {
+      // prevent the default href navigation so we can include the prefilled text
+      ev.preventDefault();
+      const waMessage = buildWhatsAppMessage("");
+      showToast("Opening WhatsApp…");
+      // open in a new tab/window — use the wa.me link with encoded text
+      window.open(WA_BASE + encodeURIComponent(waMessage), "_blank");
+    });
   }
 
-  sendBtn && sendBtn.addEventListener("click", onSend);
-  input && input.addEventListener("keydown", e => { if (e.key === "Enter") onSend(); });
-
-  // focus input on idle
-  if ("requestIdleCallback" in window) requestIdleCallback(() => { input && input.focus && input.focus({ preventScroll: true }); }, { timeout: 700 });
-  else setTimeout(() => { input && input.focus && input.focus({ preventScroll: true }); }, 300);
+  // focus nothing in particular since there's no composer
 });
