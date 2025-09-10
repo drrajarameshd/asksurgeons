@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Dr. D. Raja Ramesh, MD (Osmania)",
+    "speciality": "General Medicine",
+    "image": "doctors/images/image1.webp",
+    "bio": "Consultant Physician with long experience in internal medicine, chronic disease management and patient counseling. Provides holistic care and coordinates with surgeons when needed.",
+    "department": "General Medicine"
+  },
+  {
+    "name": "Dr. Karthik, MS, MCh (PGI)",
+    "speciality": "Transplant Surgeon",
+    "image": "doctors/images/image2.webp",
+    "bio": "Transplant surgeon specializing in renal and pancreatic transplantation. Experienced in pre-transplant evaluation, perioperative care and transplant follow-up.",
+    "department": "Transplant Surgery"
+  },
+  {
+    "name": "Dr. D. Lakshmi Prasanna, MBBS",
+    "speciality": "General Practitioner",
+    "image": "doctors/images/image3.webp",
+    "bio": "Experienced MBBS practitioner providing quality diagnosis, treatment, and compassionate patient care",
+    "department": "Primary Care"
+  },
+   {
+    "name": "Dr. Nagarjuna, MS (PGI)",
+    "speciality": "E.N.T",
+    "image": "doctors/images/image4.webp",
+    "bio": "Skilled ENT specialist treating ear, nose & throat conditions with advanced care and patient-focused approach.",
+    "department": "ENT"
+  },
+  {
+    "name": "Dr. Laxminath Sivaraju, MCh",
+    "speciality": "Neurosurgery",
+    "image": "doctors/images/image5.webp",
+    "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
+    "department": "Neurosurgery"
+  },
+  {
+    "name": "Dr. B. Sudhakar MS (Osmania)",
+    "speciality": "Orthopedics & Joint Replacement",
+    "image": "doctors/images/image6.webp",
+    "bio": "Orthopedic surgeon focusing on joint replacements (hip, knee) and complex trauma reconstructions. Emphasis on rehab protocols and outcome tracking.",
+    "department": "Orthopedics"
+  },
+  {
+    "name": "Dr. R. Iyer, MCh",
+    "speciality": "Cardiothoracic Surgery",
+    "image": "doctors/images/image7.webp",
+    "bio": "Cardiac and vascular surgeon experienced in coronary bypass, valvular surgery and vascular reconstructions. Works closely with cardiology team.",
+    "department": "Cardiac Surgery"
+  },
+  {
+    "name": "Dr. Vinay MS, Mch(Nims)",
+    "speciality": "Urology & Kidney Surgery",
+    "image": "doctors/images/image8.webp",
+    "bio": "Urologist with expertise in endourology, stone disease and reconstructive urology. Provides perioperative and follow-up care.",
+    "department": "Urology"
+  },
+  {
+    "name": "Dr. H. Kulkarni, MS",
+    "speciality": "Gastrointestinal & Liver Surgery",
+    "image": "doctors/images/image9.webp",
+    "bio": "GI surgeon experienced in hepatobiliary procedures, laparoscopic gastric surgery and complex GI oncology cases.",
+    "department": "GI & Hepatobiliary"
+  },
+  {
+    "name": "Dr. S. Mehta, MCh",
+    "speciality": "Onco (Cancer) Surgery",
+    "image": "doctors/images/image10.webp",
+    "bio": "Surgical oncologist providing multidisciplinary care for solid organ cancers. Focus on oncologic safety and functional outcomes.",
+    "department": "Oncology"
+  },
+  {
+    "name": "Dr. L. Narayan, MS",
+    "speciality": "Plastic & Reconstructive Surgery",
+    "image": "doctors/images/image11.webp",
+    "bio": "Plastic surgeon specializing in reconstructive microsurgery, trauma reconstruction and cosmetic procedures with an emphasis on natural outcomes.",
+    "department": "Plastic Surgery"
+  }
+]
