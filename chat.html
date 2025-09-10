@@ -8,30 +8,37 @@
 <link rel="stylesheet" href="assets/chat.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <meta name="theme-color" content="#007BBF" />
-<script src="assets/scripts/chat.js"></script>
-</head>
-<body>
-
 
 <!-- Google tag (gtag.js) - place in <head> -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17523822825"></script>
 <script src="/assets/scripts/gtag.js"></script>
 
+</head>
+<body>
 
 <!-- header built by script -->
 <div id="chat-root"></div>
 
-
 <!-- main chat area -->
 <div class="chat-area" id="chat-area"></div>
 
-
 <!-- bottom action bar (call, back to directory, whatsapp) -->
 <nav class="bottom-actions" role="navigation" aria-label="Chat actions">
-<a id="call-btn" class="action-btn" href="tel:+918062182411" aria-label="Call AskSurgeons"><span class="icon"><i class="fas fa-phone"></i></span><span class="label">Call</span></a>
-<button id="wa-btn" class="action-btn wa" aria-label="Open WhatsApp"><span class="icon"><i class="fab fa-whatsapp"></i></span><span class="label">WhatsApp</span></button>
-<button id="dir-btn" class="action-btn primary" aria-label="Back to directory"><span class="icon"><i class="fas fa-arrow-left"></i></span><span class="label">Directory</span></button>
+  <a id="call-btn" class="action-btn" href="tel:+918062182411" aria-label="Call AskSurgeons">
+    <span class="icon"><i class="fas fa-phone"></i></span><span class="label">Call</span>
+  </a>
+
+  <!-- WhatsApp should be a link so it opens properly on click -->
+  <a id="wa-btn" class="action-btn wa" href="https://wa.me/918062182411" target="_blank" rel="noopener" aria-label="Open WhatsApp">
+    <span class="icon"><i class="fab fa-whatsapp"></i></span><span class="label">WhatsApp</span>
+  </a>
+
+  <!-- Directory must be a link back to doctors list -->
+  <a id="dir-btn" class="action-btn primary" href="doctors.html" aria-label="Back to directory">
+    <span class="icon"><i class="fas fa-arrow-left"></i></span><span class="label">Directory</span>
+  </a>
 </nav>
 
+<script src="assets/scripts/chat.js" defer></script>
 </body>
 </html>
