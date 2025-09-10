@@ -8,10 +8,10 @@
   },
   {
     "name": "Dr. Karthik, MS, MCh (PGI)",
-    "speciality": "Renal & Pancreatic Transplant",
+    "speciality": "Transplant Surgery",
     "image": "doctors/images/image2.webp",
     "bio": "Transplant surgeon specializing in renal and pancreatic transplantation. Experienced in pre-transplant evaluation, perioperative care and transplant follow-up.",
-    "department": "Transplant Surgery"
+    "department": "Renal & Pancreatic Transplant"
   },
   {
     "name": "Dr. D. Lakshmi Prasanna, MBBS",
@@ -71,9 +71,9 @@
   },
   {
     "name": "Dr. L. Narayan, MS",
-    "speciality": "Plastic & Reconstructive Surgery",
+    "speciality": "Plastic Surgery",
     "image": "doctors/images/image11.webp",
     "bio": "Plastic surgeon specializing in reconstructive microsurgery, trauma reconstruction and cosmetic procedures with an emphasis on natural outcomes.",
-    "department": "Plastic Surgery"
+    "department": "Plastic & Reconstructive Surgery"
   }
 ]
