@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function createPillMenu() {
     const menu = document.createElement("div");
     menu.className = "pill-menu";
-    menu.innerHTML = `
+    menu.innerHTML = `<div class = "pill-grid">
       <button type="button" class="pill" data-pill="areas" aria-label="Areas of expertise">
         <i class="fa-solid fa-hand-holding-medical" aria-hidden="true"></i><span>Areas of Expertise </span>
       </button>
@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <button type="button" class="pill" data-pill="surgeries" aria-label="Common surgeries">
         <i class="fa-solid fa-scissors" aria-hidden="true"></i><span>Surgeries</span>
       </button>
+      </div>
     `;
     menu.addEventListener("click", (ev) => {
       const btn = ev.target.closest("button[data-pill]");
