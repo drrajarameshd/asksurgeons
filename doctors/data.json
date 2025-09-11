@@ -55,19 +55,19 @@
     "bio": "Urologist with expertise in endourology, stone disease and reconstructive urology. Provides perioperative and follow-up care.",
     "department": "Urology"
   },
-   {
+  {
+    "name": "Dr. Abdullah Umayr, MS, FMAS ",
+    "speciality": "General Surgery",
+    "image": "doctors/images/image9.webp",
+    "bio": "Experienced General & Laparoscopic Surgeon skilled in advanced surgical techniques, committed to patient-centered care and optimal outcomes",
+    "department": "General Surgery & Laproscopic Surgery"
+  },
+ {
     "name": "Dr. B. Naresh, MCh(Osmania)",
     "speciality": "Neurosurgery",
-    "image": "doctors/images/image9.webp",
+    "image": "doctors/images/image10.webp",
     "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
     "department": "Neurosurgery"
-  },
-  {
-    "name": "Dr. S. Mehta, MCh",
-    "speciality": "Onco (Cancer) Surgery",
-    "image": "doctors/images/image10.webp",
-    "bio": "Surgical oncologist providing multidisciplinary care for solid organ cancers. Focus on oncologic safety and functional outcomes.",
-    "department": "Oncology"
   }
 ]
 
