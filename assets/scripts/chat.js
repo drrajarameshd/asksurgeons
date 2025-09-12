@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   root.innerHTML = `
     <header class="chat-header" role="banner">
-      <button id="back-btn" aria-label="Back" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+      <button id="back-btn" aria-label="Back" class="icon-btn" style="background: transparent;"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="20" height="20" fill="white" aria-hidden="true"> <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/> </svg> </button>
       <img class="avatar" src="${esc(doctor.image)}" alt="${esc(doctor.name)}" onerror="this.src='assets/logos/logo3.webp'">
       <div class="meta">
         <div class="name">${esc(doctor.name)}</div>
