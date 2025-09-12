@@ -150,3 +150,23 @@ background: var(--background);
 /* Optional small floating style variant (uncomment to use)
 .bottom-actions { left: auto; right: 18px; width: auto; border-radius: 28px; padding: 6px; }
 */
+
+.icon-btn {
+  background: transparent; /* no fill */
+  border: none;            /* remove border */
+  padding: 0;              /* remove default padding */
+  margin: 0;
+  cursor: pointer;
+  line-height: 1;          /* avoid extra vertical space */
+  display: inline-flex;    /* keeps it tight around the svg */
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn svg {
+  display: block;          /* removes inline gaps */
+  width: 20px;
+  height: 20px;
+  fill: white;             /* icon color */
+}
+
