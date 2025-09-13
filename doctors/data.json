@@ -62,10 +62,17 @@
     "bio": "Experienced General & Laparoscopic Surgeon skilled in advanced surgical techniques, committed to patient-centered care and optimal outcomes",
     "department": "General Surgery & Laproscopic Surgery"
   },
+   {
+    "name": "Dr Ashfa Neelofer, MS, FIAGES",
+    "speciality": "General Surgery",
+    "image": "doctors/images/image10.webp",
+    "bio": "Experienced General & Laparoscopic Surgeon skilled in advanced surgical techniques, committed to patient-centered care and optimal outcomes",
+    "department": "General Surgery & Laproscopic Surgery"
+  },
  {
     "name": "Dr. B. Naresh, MCh(Osmania)",
     "speciality": "Neurosurgery",
-    "image": "doctors/images/image10.webp",
+    "image": "doctors/images/image11.webp",
     "bio": "Neurosurgeon handling spinal and cranial procedures, with experience in neurotrauma, tumor surgery and functional neurosurgery.",
     "department": "Neurosurgery"
   }
